@@ -8,10 +8,10 @@ const textureMap = {
   grass5: 'r16c5.png',
 };
 
-const characterFrames = (row: number) => {
+const characterFrames = (row: number, keyframe: number, keyframes: number = 2) => {
   const frames = [];
-  for(let i = 1; i <= 4; i++) {
-    frames.push(Texture.from(`c_r${row}c${i}.png`))
+  for(let i = 0; i < keyframes; i++) {
+    frames.push(Texture.from(`c_r${row}c${i + keyframe}.png`))
   }
   return frames;
 }
@@ -34,18 +34,18 @@ class TextureCache {
   static get grass5 () { return this._lookup('grass5') }
 
   static get cDown () {
-    return this._lookup('cDown', () => characterFrames(1))
+    return this._lookup('cDown', () => characterFrames(1, 3))
   }
 
   static get cRight () {
-    return this._lookup('cRight', () => characterFrames(2))
+    return this._lookup('cRight', () => characterFrames(1, 7))
   }
 
   static get cUp () {
-    return this._lookup('cUp', () => characterFrames(3))
+    return this._lookup('cUp', () => characterFrames(1, 1))
   }
   static get cLeft () {
-    return this._lookup('cLeft', () => characterFrames(4))
+    return this._lookup('cLeft', () => characterFrames(1, 5))
   }
 }
 

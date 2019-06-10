@@ -13,14 +13,15 @@
     "babel-preset-env": "^1.7.0",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.3",
+    "sass": "^1.21.0",
     "typescript": "^3.5.1"
   },
   "scripts": {
     "start": "npm-run-all prepare server",
     "build": "npm-run-all prepare parcel-build",
     "prebuild:dir": "mkdir -p dist",
-    "prebuild:atlas": "ruby build/tiles.rb > dist/tileset.json",
-    "prebuild:character_atlas": "ruby build/character_tiles.rb > dist/character32.json",
+    "prebuild:atlas": "ruby build/tiles.rb -x 2048 -y 1536 -s 32 -t 'tileset.png' > dist/tileset.json",
+    "prebuild:character_atlas": "ruby build/tiles.rb -x 512 -y 1440 -s 32 -t 'character32.png' --prefix='c' > dist/character32.json",
     "prebuild:copy": "cp src/assets/*.png dist/",
     "prepare": "npm-run-all prebuild:*",
     "server": "parcel index.html",

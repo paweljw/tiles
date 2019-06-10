@@ -7,22 +7,62 @@ import {
 
 import TextureCache from './src/TextureCache';
 import getRandomInt from './src/helpers/getRandomInt';
-
-const { AnimatedSprite } = PixiExtras;
+import { CharacterContainer, Facing } from './src/CharacterContainer'
+import { SteppableInterface } from './src/index'
 
 const app = new Application({
-  width: 800,
-  height: 600,
+  width: 1024,
+  height: 576,
   antialias: true,
   transparent: false,
-  resolution: window.devicePixelRatio || 1
+  resolution: (window.devicePixelRatio || 1) * 2
 });
 
 app.renderer.backgroundColor = 0x666666;
 
 document.getElementById('app').appendChild(app.view);
 
-let char: PIXI.extras.AnimatedSprite;
+let char: CharacterContainer;
+let steppables: Array<SteppableInterface> = [];
+
+const gameLoop = (delta: number) => {
+  steppables.forEach(steppable => steppable.step(delta));
+}
+
+window.addEventListener('keydown', (event: KeyboardEvent) => {
+  if (!char) {
+    return;
+  }
+
+  const { code } = event;
+
+  switch(code) {
+    case 'KeyD':
+      char.startMoving(Facing.UP);
+      break;
+    case 'KeyS':
+      char.startMoving(Facing.DOWN);
+      break;
+    case 'KeyH':
+      char.startMoving(Facing.RIGHT);
+      break;
+    case 'KeyA':
+      char.startMoving(Facing.LEFT);
+      break;
+  }
+})
+
+window.addEventListener('keyup', (event: KeyboardEvent) => {
+  if (!char) {
+    return;
+  }
+
+  const { code } = event;
+
+  if(code === 'KeyD' || code === 'KeyS' || code === 'KeyH' || code === 'KeyA') {
+    char.stopMoving();
+  }
+})
 
 loader.add('spritesheet', './tileset.json')
       .add('character_spritesheet', './character32.json')
@@ -41,15 +81,12 @@ loader.add('spritesheet', './tileset.json')
           }
         }
 
-        char = new AnimatedSprite(TextureCache.cDown);
+        char = new CharacterContainer(400, 300);
+        steppables.push(char);
 
-        char.x = 400;
-        char.y = 300;
-        char.animationSpeed = 0.1;
+        app.stage.addChild(char.sprite);
 
-        char.play();
-
-        app.stage.addChild(char);
+        app.ticker.add(delta => gameLoop(delta));
         
         app.start();
       })

@@ -1,5 +1,6 @@
 import { extras } from 'pixi.js';
-import TextureCache from './TextureCache';
+import TextureCache from './textures/TextureCache';
+import Character from './textures/Character';
 
 export enum Facing {
   UP = 'cUp',
@@ -12,10 +13,10 @@ export class CharacterContainer {
   public sprite: PIXI.extras.AnimatedSprite;
   private facing: Facing = Facing.DOWN;
   private moving: boolean = false;
-  private movementSpeed: number = 1.6;
+  private movementSpeed: number = 2.4;
 
   constructor(x: number, y: number) {
-    this.sprite = new extras.AnimatedSprite(TextureCache[this.facing]);
+    this.sprite = new extras.AnimatedSprite(Character[this.facing]);
     this.sprite.x = x;
     this.sprite.y = y;
     this.sprite.animationSpeed = 0.1;

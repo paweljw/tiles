@@ -29,6 +29,7 @@
     "clean": "rm -f dist/*.*"
   },
   "dependencies": {
+    "pixi-viewport": "^4.0.0-beta.0",
     "pixi.js": "4.8.7"
   }
 }

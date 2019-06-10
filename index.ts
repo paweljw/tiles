@@ -7,20 +7,30 @@ import {
 
 import TextureCache from './src/TextureCache';
 import getRandomInt from './src/helpers/getRandomInt';
+import scaleToWindow from './src/helpers/scaleToWindow';
 import { CharacterContainer, Facing } from './src/CharacterContainer'
 import { SteppableInterface } from './src/index'
 
 const app = new Application({
-  width: 1024,
-  height: 576,
+  width: 1280,
+  height: 720,
   antialias: true,
   transparent: false,
-  resolution: (window.devicePixelRatio || 1) * 2
+  resolution: (window.devicePixelRatio || 1)
 });
 
+document.getElementById('app').appendChild(app.view);
+
+app.renderer.autoResize = true;
 app.renderer.backgroundColor = 0x666666;
 
-document.getElementById('app').appendChild(app.view);
+scaleToWindow(app.view);
+scrollTo(0, 0);
+
+window.addEventListener('resize', () => {
+  scaleToWindow(app.view);
+  scrollTo(0, 0);
+});
 
 let char: CharacterContainer;
 let steppables: Array<SteppableInterface> = [];

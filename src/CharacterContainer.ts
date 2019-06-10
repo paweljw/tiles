@@ -1,6 +1,6 @@
 import { extras } from 'pixi.js';
-import TextureCache from './textures/TextureCache';
 import Character from './textures/Character';
+import Keyboard from './Keyboard';
 
 export enum Facing {
   UP = 'cUp',
@@ -12,46 +12,27 @@ export enum Facing {
 export class CharacterContainer {
   public sprite: PIXI.extras.AnimatedSprite;
   private facing: Facing = Facing.DOWN;
-  private moving: boolean = false;
   private movementSpeed: number = 2.4;
 
   constructor(x: number, y: number) {
     this.sprite = new extras.AnimatedSprite(Character[this.facing]);
     this.sprite.x = x;
     this.sprite.y = y;
-    this.sprite.animationSpeed = 0.1;
-    this.stopMoving();
-  }
-
-  public startMoving(facing: Facing): void {
-    if (this.moving && this.facing === facing) return;
-
-    this.sprite.textures = TextureCache[facing];
-    this.sprite.play();
-    this.facing = facing;
-    this.moving = true;
-  }
-
-  public stopMoving (): void {
+    this.sprite.animationSpeed = 0.05 * this.movementSpeed;
+    this.sprite.anchor.set(0.5);
+    this.setFacing(this.facing);
     this.sprite.stop();
-    this.moving = false;
   }
 
-  private safelyMove(x: number, y: number): void {
-    const newX = this.sprite.x + x;
-    const newY = this.sprite.y + y;
+  private setFacing(facing: Facing): void {
+    if(this.facing === facing) return;
 
-    if (newX > 0 && newY > 0) {
-      this.sprite.x = newX;
-      this.sprite.y = newY;
-    }
+    this.facing = facing;
+    console.log(Character[facing]);
+    this.sprite.textures = Character[facing];
   }
 
-  public step(delta: number): void {
-    if(!this.moving) return;
-
-    const moveBy = delta * this.movementSpeed;
-
+  private move (moveBy: number): void {
     switch(this.facing) {
       case Facing.UP:
         this.safelyMove(0, -moveBy);
@@ -65,6 +46,35 @@ export class CharacterContainer {
       case Facing.RIGHT:
         this.safelyMove(moveBy, 0);
         return;
+    }
+  }
+
+  private safelyMove(x: number, y: number): void {
+    const newX = this.sprite.x + x;
+    const newY = this.sprite.y + y;
+
+    if (newX > 0 && newY > 0) {
+      this.sprite.x = newX;
+      this.sprite.y = newY;
+    }
+  }
+
+  public step(delta: number): void {
+    const moveBy = delta * this.movementSpeed;
+
+    Keyboard.update();
+
+    if (Keyboard.isMoving) {
+      this.setFacing(Keyboard.facing);
+      console.log(Keyboard.facing);
+
+      if(!this.sprite.playing) {
+        this.sprite.play();
+      }
+
+      this.move(moveBy);
+    } else {
+      if(this.sprite.playing) { this.sprite.stop(); }
     }
   }
 }

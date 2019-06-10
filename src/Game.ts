@@ -1,8 +1,10 @@
 import {
   Application,
   loader,
-  Sprite
+  Sprite,
+  Container
 } from 'pixi.js';
+import { Viewport } from 'pixi-viewport';
 
 import scaleToWindow from './helpers/scaleToWindow';
 import { CharacterContainer } from './CharacterContainer';
@@ -52,7 +54,9 @@ class Game {
     this.steppables.forEach(steppable => steppable.step(delta));
   }
 
-  afterLoad = () => {
+  buildGrassContainer = () => {
+    const grassContainer = new Container();
+
     for(let i = 0; i < 3200 / 32; i++) {
       for(let j = 0; j < 3200 / 32; j++) {
         const grassName = `grass${getRandomInt(5) + 1}`;
@@ -61,17 +65,28 @@ class Game {
         grass.x = i * 32;
         grass.y = j * 32;
 
-        this.app.stage.addChild(grass);
+        grassContainer.addChild(grass);
       }
     }
 
-    this.char = new CharacterContainer(400, 300);
-    this.steppables.push(this.char);
+    return grassContainer;
+  }
 
-    this.app.stage.addChild(this.char.sprite);
+  buildViewport = () => {
+    const viewport = new Viewport({
+      screenWidth: 1280,
+      screenHeight: 720,
+      worldWidth: 3200,
+      worldHeight: 3200,
+    })
 
-    this.app.ticker.add(delta => this.loop(delta));
+    viewport.decelerate()
+            .clamp({ direction: 'all' });
 
+    return viewport;
+  }
+
+  startGame = () => {
     this.element.children[0].remove();
     this.element.appendChild(this.app.view);
 
@@ -80,6 +95,25 @@ class Game {
     this.onResizeHandler();
             
     this.app.start();
+  }
+
+  afterLoad = () => {
+    const viewport = this.buildViewport();
+
+    viewport.addChild(this.buildGrassContainer());
+
+    this.char = new CharacterContainer(400, 300);
+    this.steppables.push(this.char);
+
+    viewport.addChild(this.char.sprite);
+
+    viewport.follow(this.char.sprite);
+
+    this.app.stage.addChild(viewport);
+
+    this.app.ticker.add(delta => this.loop(delta));
+
+    this.startGame();
   }
 }
 

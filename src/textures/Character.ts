@@ -18,15 +18,15 @@ class Character extends TextureCache {
   }
 
   static get cDown () {
-    return this._lookup('cUp', () => this._characterFrames(this._rowOffset + 1, this._colOffset + 3))
+    return this._lookup('cDown', () => this._characterFrames(this._rowOffset + 1, this._colOffset + 3))
   }
 
   static get cLeft () {
-    return this._lookup('cUp', () => this._characterFrames(this._rowOffset + 1, this._colOffset + 5))
+    return this._lookup('cLeft', () => this._characterFrames(this._rowOffset + 1, this._colOffset + 5))
   }
 
   static get cRight () {
-    return this._lookup('cUp', () => this._characterFrames(this._rowOffset + 1, this._colOffset + 7))
+    return this._lookup('cRight', () => this._characterFrames(this._rowOffset + 1, this._colOffset + 7))
   }
 }
 

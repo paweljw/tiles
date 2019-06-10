@@ -19,13 +19,10 @@ const app = new Application({
   resolution: (window.devicePixelRatio || 1)
 });
 
-document.getElementById('app').appendChild(app.view);
+const appDiv = document.getElementById('app');
 
 app.renderer.autoResize = true;
 app.renderer.backgroundColor = 0x666666;
-
-scaleToWindow(app.view);
-scrollTo(0, 0);
 
 window.addEventListener('resize', () => {
   scaleToWindow(app.view);
@@ -97,6 +94,13 @@ loader.add('spritesheet', './tileset.json')
         app.stage.addChild(char.sprite);
 
         app.ticker.add(delta => gameLoop(delta));
-        
+
+        appDiv.children[0].remove();
+        appDiv.appendChild(app.view);
+
+        appDiv.classList.remove('app--loading');
+        scaleToWindow(app.view);
+        scrollTo(0, 0);
+                
         app.start();
       })

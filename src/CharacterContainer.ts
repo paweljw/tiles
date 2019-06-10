@@ -19,7 +19,6 @@ export class CharacterContainer {
     this.sprite.x = x;
     this.sprite.y = y;
     this.sprite.animationSpeed = 0.1;
-    this.sprite.tint = Math.random() * 0xFFFFFF;
     this.stopMoving();
   }
 

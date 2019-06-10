@@ -5,6 +5,7 @@ import {
   Container
 } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
+import { Simple as Cull } from 'pixi-cull';
 
 import scaleToWindow from './helpers/scaleToWindow';
 import { CharacterContainer } from './CharacterContainer';
@@ -13,10 +14,12 @@ import Grass from './textures/Grass';
 import { SteppableInterface } from '.';
 
 class Game {
-  public element: HTMLElement;
-  public app: PIXI.Application;
-  public char: CharacterContainer;
-  public steppables: Array<SteppableInterface> = [];
+  private element: HTMLElement;
+  private app: PIXI.Application;
+  private char: CharacterContainer;
+  private steppables: Array<SteppableInterface> = [];
+  private cullMask: Cull;
+  private viewport: Viewport;
 
   public static buildApp = (): PIXI.Application => {
     const app = new Application({
@@ -52,6 +55,14 @@ class Game {
 
   loop = (delta: number) => {
     this.steppables.forEach(steppable => steppable.step(delta));
+
+    this.cullMask.dirty = 'dirty';
+
+    if (this.viewport.dirty)
+    {
+      this.cullMask.cull(this.viewport.getVisibleBounds());
+      this.viewport.dirty = false;
+    }
   }
 
   buildGrassContainer = () => {
@@ -98,21 +109,27 @@ class Game {
   }
 
   afterLoad = () => {
-    const viewport = this.buildViewport();
+    this.viewport = this.buildViewport();
 
-    viewport.addChild(this.buildGrassContainer());
+    const grass = this.buildGrassContainer();
+
+    this.cullMask = new Cull();
+    this.cullMask.addList(grass.children, true);
+
+    this.viewport.addChild(grass);
 
     this.char = new CharacterContainer(400, 300);
     this.steppables.push(this.char);
 
-    viewport.addChild(this.char.sprite);
+    this.viewport.addChild(this.char.sprite);
+    this.viewport.follow(this.char.sprite);
+    this.app.stage.addChild(this.viewport);
 
-    viewport.follow(this.char.sprite);
+    this.cullMask.add(this.char.sprite, false);
 
-    this.app.stage.addChild(viewport);
+    this.cullMask.cull(this.viewport.getVisibleBounds());
 
     this.app.ticker.add(delta => this.loop(delta));
-
     this.startGame();
   }
 }

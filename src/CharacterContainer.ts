@@ -9,6 +9,7 @@ export enum Facing {
   RIGHT = 'cRight',
 }
 
+
 export class CharacterContainer {
   public sprite: PIXI.extras.AnimatedSprite;
   private facing: Facing = Facing.DOWN;
@@ -20,6 +21,7 @@ export class CharacterContainer {
     this.sprite.y = y;
     this.sprite.animationSpeed = 0.05 * this.movementSpeed;
     this.sprite.anchor.set(0.5);
+    this.sprite.dirty = true; // Required by pixi-cull
     this.setFacing(this.facing);
     this.sprite.stop();
   }
@@ -28,7 +30,6 @@ export class CharacterContainer {
     if(this.facing === facing) return;
 
     this.facing = facing;
-    console.log(Character[facing]);
     this.sprite.textures = Character[facing];
   }
 
@@ -56,17 +57,24 @@ export class CharacterContainer {
     if (newX > 0 && newY > 0) {
       this.sprite.x = newX;
       this.sprite.y = newY;
+
+      this.sprite.dirty = true; // Required by pixi-cull
     }
   }
 
   public step(delta: number): void {
+    if (Keyboard.debugSpeed) {
+      this.movementSpeed = 6;
+    } else {
+      this.movementSpeed = 3;
+    }
+
     const moveBy = delta * this.movementSpeed;
 
     Keyboard.update();
 
     if (Keyboard.isMoving) {
       this.setFacing(Keyboard.facing);
-      console.log(Keyboard.facing);
 
       if(!this.sprite.playing) {
         this.sprite.play();
@@ -74,7 +82,7 @@ export class CharacterContainer {
 
       this.move(moveBy);
     } else {
-      if(this.sprite.playing) { this.sprite.stop(); }
+      if(this.sprite.playing) { this.sprite.gotoAndStop(1); } // Very specific to character tileset used. Usually 0
     }
   }
 }

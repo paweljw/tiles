@@ -4270,6 +4270,11 @@ pify@^3.0.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"
   integrity sha1-5aSs0sEB/fPZpNB/DbxNtJ3SgXY=
 
+pixi-cull@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/pixi-cull/-/pixi-cull-0.4.0.tgz#b4169499ee913965e4df798c96a48d8b8310375b"
+  integrity sha512-WF7Nao6ntS/dP46AQir99w5PCVDlAf3lKc35hdmby25H7RO2jfaN14GFYguUdDbY4HODzEAixdx2SVIVdx1x4Q==
+
 pixi-gl-core@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/pixi-gl-core/-/pixi-gl-core-1.1.4.tgz#8b4b5c433b31e419bc379dc565ce1b835a91b372"

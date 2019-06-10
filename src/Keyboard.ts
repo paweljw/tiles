@@ -23,6 +23,10 @@ class Keyboard {
     return this.goUp || this.goDown || this.goLeft || this.goRight;
   }
 
+  static get debugSpeed (): boolean {
+    return PixiKeyboard.isKeyDown('KeyF'); // Press F to pay res- I mean, debug faster
+  }
+
   static update () {
     PixiKeyboard.update();
   }

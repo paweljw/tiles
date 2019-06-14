@@ -1,6 +1,6 @@
 import { default as PixiKeyboard } from 'pixi.js-keyboard';
 import ConfigManager from './ConfigManager';
-import { Facing } from './CharacterContainer';
+import { Facing, Direction } from './types';
 
 class Keyboard {
   static get goUp (): boolean {
@@ -32,14 +32,34 @@ class Keyboard {
   }
 
   static get facing (): Facing {
-    if (this.goRight) {
+    if (this.goDown) {
+      return Facing.DOWN;
+    } else if (this.goUp) {
+      return Facing.UP;
+    } else if (this.goRight) {
       return Facing.RIGHT;
     } else if (this.goLeft) {
       return Facing.LEFT;
+    } 
+  }
+
+  static get direction (): Direction {
+    if(this.goUp && this.goRight) {
+      return Direction.UP_RIGHT
+    } else if(this.goUp && this.goLeft) {
+      return Direction.UP_LEFT
+    } else if(this.goDown && this.goRight) {
+      return Direction.DOWN_RIGHT
+    } else if(this.goDown && this.goLeft) {
+      return Direction.DOWN_LEFT
+    } else if (this.goRight) {
+      return Direction.RIGHT;
+    } else if (this.goLeft) {
+      return Direction.LEFT;
     } else if (this.goDown) {
-      return Facing.DOWN;
+      return Direction.DOWN;
     } else {
-      return Facing.UP;
+      return Direction.UP;
     }
   }
 }

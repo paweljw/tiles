@@ -1,13 +1,8 @@
 import { extras } from 'pixi.js';
 import Character from './textures/Character';
 import Keyboard from './Keyboard';
-
-export enum Facing {
-  UP = 'cUp',
-  DOWN = 'cDown',
-  LEFT = 'cLeft',
-  RIGHT = 'cRight',
-}
+import { Facing, Direction } from './types';
+import movementMatrix from './constants/movementMatrix';
 
 
 export class CharacterContainer {
@@ -33,21 +28,10 @@ export class CharacterContainer {
     this.sprite.textures = Character[facing];
   }
 
-  private move (moveBy: number): void {
-    switch(this.facing) {
-      case Facing.UP:
-        this.safelyMove(0, -moveBy);
-        return;
-      case Facing.DOWN:
-        this.safelyMove(0, moveBy);
-        return;
-      case Facing.LEFT:
-        this.safelyMove(-moveBy, 0);
-        return;
-      case Facing.RIGHT:
-        this.safelyMove(moveBy, 0);
-        return;
-    }
+  private move (moveBy: number, direction: Direction): void {
+    const [xMod, yMod] = movementMatrix[direction]
+
+    this.safelyMove(xMod * moveBy, yMod * moveBy)
   }
 
   private safelyMove(x: number, y: number): void {
@@ -80,7 +64,7 @@ export class CharacterContainer {
         this.sprite.play();
       }
 
-      this.move(moveBy);
+      this.move(moveBy, Keyboard.direction);
     } else {
       if(this.sprite.playing) { this.sprite.gotoAndStop(1); } // Very specific to character tileset used. Usually 0
     }

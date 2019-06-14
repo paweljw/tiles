@@ -11,7 +11,7 @@ import scaleToWindow from './helpers/scaleToWindow';
 import { CharacterContainer } from './CharacterContainer';
 import getRandomInt from './helpers/getRandomInt';
 import Grass from './textures/Grass';
-import { SteppableInterface } from '.';
+import { SteppableInterface } from './types';
 
 class Game {
   private element: HTMLElement;

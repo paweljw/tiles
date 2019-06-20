@@ -10,8 +10,10 @@ import { Simple as Cull } from './culling';
 import scaleToWindow from './helpers/scaleToWindow';
 import { CharacterContainer } from './CharacterContainer';
 import getRandomInt from './helpers/getRandomInt';
-import Grass from './textures/Grass';
 import { SteppableInterface } from './types';
+import Collider from './Collider';
+import Wall from './textures/Wall';
+import Floor from './textures/Floor';
 
 class Game {
   private element: HTMLElement;
@@ -20,6 +22,7 @@ class Game {
   private steppables: Array<SteppableInterface> = [];
   private cullMask: Cull;
   private viewport: Viewport;
+  private collider: Collider;
 
   public static buildApp = (): PIXI.Application => {
     const app = new Application({
@@ -55,7 +58,7 @@ class Game {
 
   loop = (delta: number) => {
     this.steppables.forEach(steppable => {
-      const dirties = steppable.step(delta);
+      const dirties = steppable.step(delta, this.collider);
       dirties.forEach(dirty => this.cullMask.markDirty(dirty))
     });
 
@@ -66,22 +69,28 @@ class Game {
     }
   }
 
-  buildGrassContainer = () => {
-    const grassContainer = new Container();
+  buildLevelContainer = () => {
+    const floor = new Container();
 
     for(let i = 0; i < 3200 / 32; i++) {
       for(let j = 0; j < 3200 / 32; j++) {
-        const grassName = `grass${getRandomInt(5) + 1}`;
-        const grass = new Sprite(Grass[grassName]);
 
-        grass.x = i * 32;
-        grass.y = j * 32;
+        const collidable = Math.random() <= 0.4;
+        const random = getRandomInt(5) + 1;
 
-        grassContainer.addChild(grass);
+        const texture = collidable ? Wall[`wall${random}`] : Floor[`floor${random}`]
+        const tile = new Sprite(texture);
+
+        tile.x = i * 32;
+        tile.y = j * 32;
+
+        floor.addChild(tile);
+
+        this.cullMask.addObject(tile, true, collidable);
       }
     }
 
-    return grassContainer;
+    return floor;
   }
 
   buildViewport = () => {
@@ -112,10 +121,9 @@ class Game {
   afterLoad = () => {
     this.viewport = this.buildViewport();
 
-    const grass = this.buildGrassContainer();
-
     this.cullMask = new Cull();
-    this.cullMask.addChildrenOf(grass);
+
+    const grass = this.buildLevelContainer();
 
     this.viewport.addChild(grass);
 
@@ -126,9 +134,11 @@ class Game {
     this.viewport.follow(this.char.sprite);
     this.app.stage.addChild(this.viewport);
 
-    this.cullMask.addObject(this.char.sprite, false);
+    this.cullMask.addObject(this.char.sprite, false, true);
 
     this.cullMask.cull(this.viewport.getVisibleBounds());
+
+    this.collider = new Collider(this.cullMask);
 
     this.app.ticker.add(delta => this.loop(delta));
     this.startGame();

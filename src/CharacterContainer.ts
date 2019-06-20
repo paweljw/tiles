@@ -3,6 +3,7 @@ import Character from './textures/Character';
 import Keyboard from './Keyboard';
 import { Facing, Direction } from './types';
 import movementMatrix from './constants/movementMatrix';
+import Collider from './Collider';
 
 
 export class CharacterContainer {
@@ -17,6 +18,7 @@ export class CharacterContainer {
     this.sprite.animationSpeed = 0.05 * this.movementSpeed;
     this.sprite.anchor.set(0.5);
     this.setFacing(this.facing);
+    this.sprite.tint = 0xCCCCCC;
     this.sprite.stop();
   }
 
@@ -27,23 +29,19 @@ export class CharacterContainer {
     this.sprite.textures = Character[facing];
   }
 
-  private move (moveBy: number, direction: Direction): void {
+  private move (moveBy: number, direction: Direction, collider: Collider): void {
     const [xMod, yMod] = movementMatrix[direction]
 
-    this.safelyMove(xMod * moveBy, yMod * moveBy)
-  }
+    const proposedX = this.sprite.x + xMod * moveBy;
+    const proposedY = this.sprite.y + yMod * moveBy;
 
-  private safelyMove(x: number, y: number): void {
-    const newX = this.sprite.x + x;
-    const newY = this.sprite.y + y;
-
-    if (newX > 0 && newY > 0) {
-      this.sprite.x = newX;
-      this.sprite.y = newY;
+    if(!collider.collision(this.sprite, proposedX, proposedY)) {
+      this.sprite.x = proposedX;
+      this.sprite.y = proposedY;
     }
   }
 
-  public step(delta: number): PIXI.DisplayObject[] {
+  public step(delta: number, collider: Collider): PIXI.DisplayObject[] {
     if (Keyboard.debugSpeed) {
       this.movementSpeed = 6;
     } else {
@@ -61,7 +59,7 @@ export class CharacterContainer {
         this.sprite.play();
       }
 
-      this.move(moveBy, Keyboard.direction);
+      this.move(moveBy, Keyboard.direction, collider);
       return [this.sprite]
     } else {
       if(this.sprite.playing) { this.sprite.gotoAndStop(1); } // Very specific to character tileset used. Usually 0

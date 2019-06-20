@@ -1,36 +1,29 @@
+import { ObjectData, ObjectDataMap, ObjectSet } from "../types";
+import calculateAABB from "../helpers/calculateAABB";
+
 // This code is heavily based on https://github.com/davidfig/pixi-cull
 
-export type AABB = {
-  x: number,
-  y: number,
-  width: number,
-  height: number
-}
-
-export type ObjectData = {
-  AABB: AABB
-}
-
-
 class Simple {
-  public dirty: Set<PIXI.DisplayObject> = new Set()
-  public objects: Map<PIXI.DisplayObject, ObjectData> = new Map() // TODO: Specialize object
+  public dirty: ObjectSet = new Set()
+  public collidable: ObjectSet = new Set()
+  public objects: ObjectDataMap = new Map();
 
-  public addObject(obj: PIXI.DisplayObject, isStatic: boolean = true): void {
+  public addObject(obj: PIXI.DisplayObject, isStatic: boolean = true, collidable: boolean = false): void {
     this.updateObjectData(obj, {
-      AABB: this.calculateAABB(obj),
+      AABB: calculateAABB(obj),
+      collidable
     })
     if(!isStatic) {
       this.markDirty(obj)
     }
   }
 
-  public addObjects(objs: PIXI.DisplayObject[], isStatic: boolean = true): void {
-    objs.forEach(obj => this.addObject(obj, isStatic))
+  public addObjects(objs: PIXI.DisplayObject[], isStatic: boolean = true, collidable: boolean = false): void {
+    objs.forEach(obj => this.addObject(obj, isStatic, collidable))
   }
 
-  public addChildrenOf(container: PIXI.Container, isStatic: boolean = true) {
-    this.addObjects(container.children, isStatic)
+  public addChildrenOf(container: PIXI.Container, isStatic: boolean = true, collidable: boolean = false) {
+    this.addObjects(container.children, isStatic, collidable)
   }
 
   public markDirty(obj: PIXI.DisplayObject): void {
@@ -40,15 +33,25 @@ class Simple {
   public cull(bounds: any): void {
     this.updateDirtyObjects();
 
-    this.objects.forEach(({ AABB: box }, obj) => {
+    this.objects.forEach(({ AABB: box, collidable }, obj) => {
       const visible =
         box.x + box.width > bounds.x && box.x < bounds.x + bounds.width &&
         box.y + box.height > bounds.y && box.y < bounds.y + bounds.height
 
       obj.visible = visible
       obj.renderable = visible
+
+      if(collidable) {
+        if(visible) {
+          this.collidable.add(obj);
+        } else {
+          this.collidable.delete(obj);
+        }
+      }
     })
   }
+
+  public allowMovementOf
 
   private markClean(obj: PIXI.DisplayObject): void {
     this.dirty.delete(obj)
@@ -56,7 +59,7 @@ class Simple {
 
   private updateObjectCoords(obj: PIXI.DisplayObject): void {
     this.updateObjectData(obj, {
-      AABB: this.calculateAABB(obj)
+      AABB: calculateAABB(obj)
     })
   }
 
@@ -74,16 +77,6 @@ class Simple {
       ...currentData,
       ...data
     })
-  }
-
-  private calculateAABB(obj: PIXI.DisplayObject): AABB {
-    const bounds = obj.getLocalBounds()
-    return {
-      x: obj.x + bounds.x * obj.scale.x,
-      y: obj.y + bounds.y * obj.scale.y,
-      width: bounds.width * obj.scale.x,
-      height: bounds.height * obj.scale.y
-    }
   }
 }
 

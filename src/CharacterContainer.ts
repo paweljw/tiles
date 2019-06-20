@@ -16,7 +16,6 @@ export class CharacterContainer {
     this.sprite.y = y;
     this.sprite.animationSpeed = 0.05 * this.movementSpeed;
     this.sprite.anchor.set(0.5);
-    this.sprite.dirty = true; // Required by pixi-cull
     this.setFacing(this.facing);
     this.sprite.stop();
   }
@@ -41,12 +40,10 @@ export class CharacterContainer {
     if (newX > 0 && newY > 0) {
       this.sprite.x = newX;
       this.sprite.y = newY;
-
-      this.sprite.dirty = true; // Required by pixi-cull
     }
   }
 
-  public step(delta: number): void {
+  public step(delta: number): PIXI.DisplayObject[] {
     if (Keyboard.debugSpeed) {
       this.movementSpeed = 6;
     } else {
@@ -65,8 +62,10 @@ export class CharacterContainer {
       }
 
       this.move(moveBy, Keyboard.direction);
+      return [this.sprite]
     } else {
       if(this.sprite.playing) { this.sprite.gotoAndStop(1); } // Very specific to character tileset used. Usually 0
+      return []
     }
   }
 }

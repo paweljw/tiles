@@ -5,7 +5,7 @@ import {
   Container
 } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
-import { Simple as Cull } from 'pixi-cull';
+import { Simple as Cull } from './culling';
 
 import scaleToWindow from './helpers/scaleToWindow';
 import { CharacterContainer } from './CharacterContainer';
@@ -54,9 +54,10 @@ class Game {
   }
 
   loop = (delta: number) => {
-    this.steppables.forEach(steppable => steppable.step(delta));
-
-    this.cullMask.dirty = 'dirty';
+    this.steppables.forEach(steppable => {
+      const dirties = steppable.step(delta);
+      dirties.forEach(dirty => this.cullMask.markDirty(dirty))
+    });
 
     if (this.viewport.dirty)
     {
@@ -102,9 +103,9 @@ class Game {
     this.element.appendChild(this.app.view);
 
     this.element.classList.remove('app--loading');
-    
+
     this.onResizeHandler();
-            
+
     this.app.start();
   }
 
@@ -114,7 +115,7 @@ class Game {
     const grass = this.buildGrassContainer();
 
     this.cullMask = new Cull();
-    this.cullMask.addList(grass.children, true);
+    this.cullMask.addChildrenOf(grass);
 
     this.viewport.addChild(grass);
 
@@ -125,7 +126,7 @@ class Game {
     this.viewport.follow(this.char.sprite);
     this.app.stage.addChild(this.viewport);
 
-    this.cullMask.add(this.char.sprite, false);
+    this.cullMask.addObject(this.char.sprite, false);
 
     this.cullMask.cull(this.viewport.getVisibleBounds());
 

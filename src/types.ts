@@ -1,5 +1,5 @@
 export interface SteppableInterface {
-  step(delta: number): void;
+  step(delta: number): PIXI.DisplayObject[];
 }
 
 export enum Facing {
@@ -19,4 +19,3 @@ export enum Direction {
   DOWN_LEFT = 'DOWN_LEFT',
   DOWN_RIGHT = 'DOWN_RIGHT',
 }
-

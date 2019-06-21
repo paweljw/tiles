@@ -20,7 +20,7 @@ const scaleToWindow = (canvas: HTMLCanvasElement): number => {
 
   //2. Center the canvas.
   //Decide whether to center the canvas vertically or horizontally.
-  //Wide canvases should be centered vertically, and 
+  //Wide canvases should be centered vertically, and
   //square or tall canvases should be centered horizontally
   if (canvas.offsetWidth > canvas.offsetHeight) {
     if (canvas.offsetWidth * scale < window.innerWidth) {
@@ -46,7 +46,7 @@ const scaleToWindow = (canvas: HTMLCanvasElement): number => {
     canvas.style.marginRight = margin + "px";
   }
 
-  //Center vertically (for wide canvases) 
+  //Center vertically (for wide canvases)
   if (center === Center.VERTICALLY) {
     margin = (window.innerHeight - canvas.offsetHeight * scale) / 2;
     canvas.style.marginTop = margin + "px";
@@ -63,21 +63,6 @@ const scaleToWindow = (canvas: HTMLCanvasElement): number => {
   canvas.style.paddingBottom = 0 + "px";
   canvas.style.display = "block";
 
-  // TODO: Below code retained from source but possibly no longer necessary; testing required
-  //Fix some quirkiness in scaling for Safari
-  // var ua = navigator.userAgent.toLowerCase();
-  // if (ua.indexOf("safari") != -1) {
-  //   if (ua.indexOf("chrome") > -1) {
-  //     // Chrome
-  //   } else {
-  //     // Safari
-  //     //canvas.style.maxHeight = "100%";
-  //     //canvas.style.minHeight = "100%";
-  //   }
-  // }
-
-  //5. Return the `scale` value. This is important, because you'll nee this value 
-  //for correct hit testing between the pointer and sprites
   return scale;
 }
 

@@ -3,8 +3,9 @@ import calculateAABB from "./helpers/calculateAABB";
 import rectCornersFromAABB from "./helpers/rectCornersFromAABB";
 
 const TOP_HITBOX_CHILL_FACTOR = 5;
-const BOTTOM_HITBOX_CHILL_FACTOR = 3;
+const BOTTOM_HITBOX_CHILL_FACTOR = 2;
 
+// TODO: Involve level bounds
 export default class Collider {
   source: CollidableSource;
 

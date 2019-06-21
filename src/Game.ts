@@ -14,6 +14,7 @@ import { SteppableInterface } from './types';
 import Collider from './Collider';
 import Wall from './textures/Wall';
 import Floor from './textures/Floor';
+import Level from './Level';
 
 class Game {
   private element: HTMLElement;
@@ -70,23 +71,34 @@ class Game {
   }
 
   buildLevelContainer = () => {
+    const level = new Level(50, 50);
     const floor = new Container();
 
-    for(let i = 0; i < 3200 / 32; i++) {
-      for(let j = 0; j < 3200 / 32; j++) {
+    // TODO: Move all of the tile generation to Level
 
-        const collidable = Math.random() <= 0.4;
-        const random = getRandomInt(5) + 1;
+    for(let i = 0; i < level.width; i++) {
+      for(let j = 0; j < level.height; j++) {
+        const tileType = level.maze[level.locate({ x: i, y: j })]
 
-        const texture = collidable ? Wall[`wall${random}`] : Floor[`floor${random}`]
-        const tile = new Sprite(texture);
+        const collidable = tileType === 'wall';
 
-        tile.x = i * 32;
-        tile.y = j * 32;
+        const baseX = i * 64;
+        const baseY = j * 64;
 
-        floor.addChild(tile);
+        for(let xOffset = 0; xOffset < 2; xOffset++) {
+          for(let yOffset = 0; yOffset < 2; yOffset++) {
+            const random = getRandomInt(5) + 1;
+            const texture = collidable ? Wall[`wall${random}`] : Floor[`floor${random}`]
+            const tile = new Sprite(texture);
 
-        this.cullMask.addObject(tile, true, collidable);
+            tile.x = baseX + xOffset * 32;
+            tile.y = baseY + yOffset * 32;
+
+            floor.addChild(tile);
+
+            this.cullMask.addObject(tile, true, collidable);
+          }
+        }
       }
     }
 
@@ -127,7 +139,7 @@ class Game {
 
     this.viewport.addChild(grass);
 
-    this.char = new CharacterContainer(400, 300);
+    this.char = new CharacterContainer(240, 720);
     this.steppables.push(this.char);
 
     this.viewport.addChild(this.char.sprite);

@@ -10,10 +10,23 @@ body {
   margin: 0;
   padding: 0;
 
+  canvas {
+    display: block;
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  img {
+    animation: fadeIn 2s ease-out;
+  }
+
   &__loading {
     color: #fff;
     flex: 1;
     text-align: center;
+
+    img {
+      max-width: 30%;
+    }
   }
 
   &--maximized {
@@ -23,10 +36,47 @@ body {
 
   &--loading {
     canvas {
-      display: none;
+      opacity: 0;
+    }
+
+    img {
+      opacity: 1;
     }
 
     display: flex;
     align-items: center;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+      display: none;
+      opacity: 0;
+  }
+
+  1% {
+      display: block;
+      opacity: 0;
+  }
+
+  100% {
+      display: block;
+      opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+      opacity: 1;
+  }
+
+  99% {
+      display: none;
+      opacity: 0;
+  }
+
+  100% {
+      display: none;
+      opacity: 0;
   }
 }

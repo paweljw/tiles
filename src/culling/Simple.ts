@@ -1,4 +1,4 @@
-import { ObjectData, ObjectDataMap, ObjectSet } from "../types";
+import { ObjectDataMap, ObjectSet } from "../types";
 import calculateAABB from "../helpers/calculateAABB";
 
 // This code is heavily based on https://github.com/davidfig/pixi-cull
@@ -50,8 +50,6 @@ class Simple {
       }
     })
   }
-
-  public allowMovementOf
 
   private markClean(obj: PIXI.DisplayObject): void {
     this.dirty.delete(obj)

@@ -11,6 +11,8 @@ This code is presented openly for reference purposes only. Unless specified othe
 * The culling algorithm used is a TypeScript reimplementation of https://github.com/davidfig/pixi-cull
 * The maze generation algorithm is based on https://github.com/semibran/maze
 * The scaleToWindow helper is a minor improvement upon https://github.com/kittykatattack/scaleToWindow
+* The icon converter at https://iconverticons.com/online/ is awesome
+* Build process based on https://github.com/shamofu/electron-react-parcel-boilerplate
 
 # Credits
 

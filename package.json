@@ -1,10 +1,11 @@
 {
   "name": "tiles",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "author": "Paweł J. Wal",
   "license": "MIT",
   "private": true,
   "main": ".parcel/main/main.js",
+  "description": "Simple dungeon crawling game",
   "build": {
     "extends": null,
     "productName": "Tiles",
@@ -20,23 +21,27 @@
         "dmg",
         "zip"
       ],
-      "artifactName": "${productName}-mac.${ext}"
+      "artifactName": "${productName}-${version}-mac.${ext}",
+      "icon": "icons/mac.icns"
     },
     "win": {
       "target": [
         "zip",
         "portable"
       ],
-      "artifactName": "${productName}-win.${ext}"
+      "artifactName": "${productName}-${version}-win.${ext}",
+      "icon": "icons/win.ico"
     },
     "linux": {
       "target": [
-        "zip",
+        "tar.gz",
         "deb",
         "rpm"
       ],
-      "category": "Games",
-      "artifactName": "${productName}-linux.${ext}"
+      "maintainer": "Paweł J. Wal <p@steamshard.net>",
+      "category": "Game",
+      "artifactName": "${productName}-${version}-linux.${ext}",
+      "icon": "icons/linux"
     },
     "directories": {
       "output": "release"

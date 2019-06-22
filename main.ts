@@ -8,7 +8,8 @@ app.on('ready', async () => {
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 720,
-    show: false
+    show: false,
+    // fullscreen: !isDev // TODO: Move to config file
   })
 
   mainWindow.once('ready-to-show', () => {

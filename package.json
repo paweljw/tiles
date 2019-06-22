@@ -4,32 +4,38 @@
   "author": "Paweł J. Wal",
   "license": "MIT",
   "private": true,
-  "main": "dist/main/main.js",
+  "main": ".parcel/main/main.js",
   "build": {
+    "extends": null,
     "productName": "Tiles",
     "appId": "net.steamshard.Tiles",
     "files": [
       "src/**",
-      "dist/renderer/**",
-      "!dist/**/*.map"
+      ".parcel/renderer/**",
+      ".parcel/main/**",
+      "!.parcel/**/*.map"
     ],
     "mac": {
       "target": [
+        "dmg",
         "zip"
       ],
       "artifactName": "${productName}-mac.${ext}"
     },
     "win": {
       "target": [
-        "zip"
+        "zip",
+        "portable"
       ],
       "artifactName": "${productName}-win.${ext}"
     },
     "linux": {
       "target": [
-        "zip"
+        "zip",
+        "deb",
+        "rpm"
       ],
-      "category": "Development",
+      "category": "Games",
       "artifactName": "${productName}-linux.${ext}"
     },
     "directories": {
@@ -57,24 +63,25 @@
   },
   "scripts": {
     "start": "run-s clean prepare main:build watch",
-    "release": "run-s clean prepare parcel:build \"electron:build {@}\" --",
+    "release": "run-s clean clean_release prepare parcel:build \"electron:build {@}\" --",
     "watch": "run-p -r parcel:watch electron:start",
-    "electron:start": "nodemon --watch dist/main --exec \"electron .\"",
+    "electron:start": "nodemon --watch .parcel/main --exec \"electron .\"",
     "electron:build": "build --x64 --publish=never",
     "parcel:watch": "run-p -r main:watch renderer:watch",
-    "main:watch": "parcel watch main.ts --out-dir dist/main --out-file main --target electron",
-    "renderer:watch": "parcel index.html --port 1124 --out-dir dist/renderer",
+    "main:watch": "parcel watch main.ts --out-dir .parcel/main --out-file main --target electron",
+    "renderer:watch": "parcel index.html --port 1124 --out-dir .parcel/renderer",
     "parcel:build": "run-s main:build renderer:build",
-    "main:build": "parcel build main.ts --out-dir dist/main --out-file main --target electron",
-    "renderer:build": "parcel buildindex.html --public-url ./ --out-dir dist/renderer",
+    "main:build": "parcel build main.ts --out-dir .parcel/main --out-file main --target electron",
+    "renderer:build": "parcel build index.html --public-url ./ --out-dir .parcel/renderer",
     "lint": "tslint src/**/*.ts{,x}",
-    "prebuild:main_dir": "shx mkdir -p dist/main",
-    "prebuild:renderer_dir": "shx mkdir -p dist/renderer",
-    "prebuild:atlas": "node build/tiles.js -w 2048 -h 1536 -s 32 -t 'tileset.png' > dist/renderer/tileset.json",
-    "prebuild:character_atlas": "node build/tiles.js -w 512 -h 1440 -s 32 -t 'character32.png' --prefix='c' > dist/renderer/character32.json",
-    "prebuild:copy": "shx cp src/assets/*.png dist/renderer",
+    "prebuild:main_dir": "shx mkdir -p .parcel/main",
+    "prebuild:renderer_dir": "shx mkdir -p .parcel/renderer",
+    "prebuild:atlas": "node build/tiles.js -w 2048 -h 1536 -s 32 -t 'tileset.png' > .parcel/renderer/tileset.json",
+    "prebuild:character_atlas": "node build/tiles.js -w 512 -h 1440 -s 32 -t 'character32.png' --prefix='c' > .parcel/renderer/character32.json",
+    "prebuild:copy": "shx cp src/assets/*.png .parcel/renderer",
     "prepare": "run-s prebuild:*",
-    "clean": "shx rm -f dist/*.*"
+    "clean": "shx rm -f .parcel/*.*",
+    "clean_release": "shx rm -rf release/*.*"
   },
   "dependencies": {
     "@babel/runtime": "^7.4.5",

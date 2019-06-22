@@ -18,7 +18,7 @@ app.on('ready', async () => {
 
   const devPath = 'http://localhost:1124'
   const prodPath = format({
-    pathname: resolve('dist/renderer/index.html'),
+    pathname: resolve('.parcel/renderer/index.html'),
     protocol: 'file:',
     slashes: true
   })

@@ -1,36 +1,85 @@
 {
   "name": "tiles",
   "version": "1.0.0",
-  "main": "index.js",
   "author": "Paweł J. Wal",
   "license": "MIT",
   "private": true,
+  "main": "dist/main/main.js",
+  "build": {
+    "productName": "Tiles",
+    "appId": "net.steamshard.Tiles",
+    "files": [
+      "src/**",
+      "dist/renderer/**",
+      "!dist/**/*.map"
+    ],
+    "mac": {
+      "target": [
+        "zip"
+      ],
+      "artifactName": "${productName}-mac.${ext}"
+    },
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "artifactName": "${productName}-win.${ext}"
+    },
+    "linux": {
+      "target": [
+        "zip"
+      ],
+      "category": "Development",
+      "artifactName": "${productName}-linux.${ext}"
+    },
+    "directories": {
+      "output": "release"
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/plugin-syntax-async-generators": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
     "@types/pixi.js": "^4.8.7",
     "babel-preset-env": "^1.7.0",
+    "electron": "^5.0.5",
+    "electron-builder": "^20.44.4",
+    "nodemon": "^1.19.1",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.3",
     "sass": "^1.21.0",
     "shx": "^0.3.2",
+    "tslint": "^5.18.0",
     "typescript": "^3.5.1",
     "yargs": "^13.2.4"
   },
   "scripts": {
-    "start": "npm-run-all prepare server",
-    "build": "npm-run-all prepare parcel-build",
-    "prebuild:dir": "shx mkdir -p dist",
-    "prebuild:atlas": "node build/tiles.js -w 2048 -h 1536 -s 32 -t 'tileset.png' > dist/tileset.json",
-    "prebuild:character_atlas": "node build/tiles.js -w 512 -h 1440 -s 32 -t 'character32.png' --prefix='c' > dist/character32.json",
-    "prebuild:copy": "shx cp src/assets/*.png dist/",
-    "prepare": "npm-run-all prebuild:*",
-    "server": "parcel index.html",
-    "parcel-build": "parcel build index.html",
-    "clean": "rm -f dist/*.*"
+    "start": "run-s clean prepare main:build watch",
+    "release": "run-s clean prepare parcel:build \"electron:build {@}\" --",
+    "watch": "run-p -r parcel:watch electron:start",
+    "electron:start": "nodemon --watch dist/main --exec \"electron .\"",
+    "electron:build": "build --x64 --publish=never",
+    "parcel:watch": "run-p -r main:watch renderer:watch",
+    "main:watch": "parcel watch main.ts --out-dir dist/main --out-file main --target electron",
+    "renderer:watch": "parcel index.html --port 1124 --out-dir dist/renderer",
+    "parcel:build": "run-s main:build renderer:build",
+    "main:build": "parcel build main.ts --out-dir dist/main --out-file main --target electron",
+    "renderer:build": "parcel buildindex.html --public-url ./ --out-dir dist/renderer",
+    "lint": "tslint src/**/*.ts{,x}",
+    "prebuild:main_dir": "shx mkdir -p dist/main",
+    "prebuild:renderer_dir": "shx mkdir -p dist/renderer",
+    "prebuild:atlas": "node build/tiles.js -w 2048 -h 1536 -s 32 -t 'tileset.png' > dist/renderer/tileset.json",
+    "prebuild:character_atlas": "node build/tiles.js -w 512 -h 1440 -s 32 -t 'character32.png' --prefix='c' > dist/renderer/character32.json",
+    "prebuild:copy": "shx cp src/assets/*.png dist/renderer",
+    "prepare": "run-s prebuild:*",
+    "clean": "shx rm -f dist/*.*"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.5",
+    "app-root-path": "^2.2.1",
+    "electron-is-dev": "^1.1.0",
     "pixi-viewport": "^4.0.0-beta.0",
     "pixi.js": "4.8.7",
     "pixi.js-keyboard": "^1.0.9"

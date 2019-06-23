@@ -4,6 +4,39 @@ body {
   background-color: #000;
 }
 
+.app, #game, #root, #loading {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    animation: fadeIn 2s ease-out;
+    display: flex;
+  }
+}
+
+#root {
+  z-index: 1;
+}
+
+#game {
+  z-index: 3;
+}
+
+.hidden {
+  display: none;
+}
+
 .app {
   display: block;
   position: fixed;
@@ -15,9 +48,6 @@ body {
     animation: fadeIn 0.5s ease-out;
   }
 
-  img {
-    animation: fadeIn 2s ease-out;
-  }
 
   &__loading {
     color: #fff;

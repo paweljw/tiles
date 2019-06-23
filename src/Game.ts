@@ -44,6 +44,8 @@ class Game {
     this.element = element;
     this.app = Game.buildApp();
 
+    console.log(element)
+
     // Ensure proper playfield resizing
     window.addEventListener('resize', this.onResizeHandler);
 
@@ -120,13 +122,11 @@ class Game {
   }
 
   startGame = () => {
-    this.element.children[0].remove();
+    window.dispatchEvent(new Event('game-loaded'))
     this.element.appendChild(this.app.view);
-
-    this.element.classList.remove('app--loading');
-
+    document.getElementById('app').classList.remove('app--loading')
+    document.getElementById('game').classList.remove('hidden')
     this.onResizeHandler();
-
     this.app.start();
   }
 
@@ -153,6 +153,7 @@ class Game {
     this.collider = new Collider(this.cullMask);
 
     this.app.ticker.add(delta => this.loop(delta));
+
     this.startGame();
   }
 }

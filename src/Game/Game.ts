@@ -10,6 +10,7 @@ import Collider from './Collider'
 import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
 import Level from './Level'
+import stores from '../stores'
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -115,7 +116,9 @@ class Game {
   }
 
   public startGame = () => {
-    window.dispatchEvent(new Event('game-loaded'))
+    const { gameStateStore } = stores
+    gameStateStore.loading = false
+
     this.element.appendChild(this.app.view)
     document.getElementById('app').classList.remove('app--loading')
     document.getElementById('game').classList.remove('hidden')

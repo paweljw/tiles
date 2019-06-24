@@ -1,39 +1,41 @@
-import * as React from 'react';
+import * as React from 'react'
 import steamshardPng from './../assets/steamshard.png'
 
-import Game from './../Game';
+import Game from '../Game/Game'
 
 class App extends React.Component {
-  appRef: HTMLDivElement
-  game: Game
+  public appRef: HTMLDivElement
+  public game: Game
 
-  state = {
+  public state = {
     loading: true
   }
 
-  componentDidMount() {
-    window.addEventListener('game-loaded', this.onGameLoaded);
-    this.game = new Game(document.getElementById('game'));
+  public componentDidMount() {
+    window.addEventListener('game-loaded', this.onGameLoaded)
+    this.game = new Game(document.getElementById('game'))
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('game-loaded', this.onGameLoaded);
+  public componentWillUnmount() {
+    window.removeEventListener('game-loaded', this.onGameLoaded)
   }
 
-  onGameLoaded = () => {
-    this.setState({ loading: false });
+  public onGameLoaded = () => {
+    this.setState({ loading: false })
   }
 
-  render () {
-    const { loading } = this.state;
+  public render() {
+    const { loading } = this.state
 
-    if(!loading) return null;
+    if (!loading) {
+      return null
+    }
 
     return (
-      <div id="loading" className="app__loading">
+      <div id='loading' className='app__loading'>
         <img src={steamshardPng} />
       </div>
-    );
+    )
   }
 }
 

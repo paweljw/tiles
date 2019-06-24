@@ -8,5 +8,5 @@ export default {
   UP_RIGHT: [COS_QT_PI, -COS_QT_PI],
   UP_LEFT: [-COS_QT_PI, -COS_QT_PI],
   DOWN_RIGHT: [COS_QT_PI, COS_QT_PI],
-  DOWN_LEFT: [-COS_QT_PI, COS_QT_PI],
+  DOWN_LEFT: [-COS_QT_PI, COS_QT_PI]
 }

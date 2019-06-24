@@ -4,7 +4,6 @@ export const root: string;
 export const loading: string;
 export const fadeIn: string;
 export const hidden: string;
-export const appLoading: string;
 export const appMaximized: string;
 export const appLoading: string;
 export const fadeOut: string;

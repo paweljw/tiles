@@ -1,5 +1,3 @@
 import Simple from './Simple'
 
-export {
-    Simple
-}
+export { Simple }

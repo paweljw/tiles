@@ -1,28 +1,40 @@
-import { ObjectDataMap, ObjectSet } from "../types";
-import calculateAABB from "../helpers/calculateAABB";
+import { ObjectDataMap, ObjectSet } from '../types'
+import calculateAABB from '../helpers/calculateAABB'
 
 // This code is heavily based on https://github.com/davidfig/pixi-cull
 
 class Simple {
   public dirty: ObjectSet = new Set()
   public collidable: ObjectSet = new Set()
-  public objects: ObjectDataMap = new Map();
+  public objects: ObjectDataMap = new Map()
 
-  public addObject(obj: PIXI.DisplayObject, isStatic: boolean = true, collidable: boolean = false): void {
+  public addObject(
+    obj: PIXI.DisplayObject,
+    isStatic: boolean = true,
+    collidable: boolean = false
+  ): void {
     this.updateObjectData(obj, {
       AABB: calculateAABB(obj),
       collidable
     })
-    if(!isStatic) {
+    if (!isStatic) {
       this.markDirty(obj)
     }
   }
 
-  public addObjects(objs: PIXI.DisplayObject[], isStatic: boolean = true, collidable: boolean = false): void {
+  public addObjects(
+    objs: PIXI.DisplayObject[],
+    isStatic: boolean = true,
+    collidable: boolean = false
+  ): void {
     objs.forEach(obj => this.addObject(obj, isStatic, collidable))
   }
 
-  public addChildrenOf(container: PIXI.Container, isStatic: boolean = true, collidable: boolean = false) {
+  public addChildrenOf(
+    container: PIXI.Container,
+    isStatic: boolean = true,
+    collidable: boolean = false
+  ) {
     this.addObjects(container.children, isStatic, collidable)
   }
 
@@ -31,21 +43,23 @@ class Simple {
   }
 
   public cull(bounds: any): void {
-    this.updateDirtyObjects();
+    this.updateDirtyObjects()
 
     this.objects.forEach(({ AABB: box, collidable }, obj) => {
       const visible =
-        box.x + box.width > bounds.x && box.x < bounds.x + bounds.width &&
-        box.y + box.height > bounds.y && box.y < bounds.y + bounds.height
+        box.x + box.width > bounds.x &&
+        box.x < bounds.x + bounds.width &&
+        box.y + box.height > bounds.y &&
+        box.y < bounds.y + bounds.height
 
       obj.visible = visible
       obj.renderable = visible
 
-      if(collidable) {
-        if(visible) {
-          this.collidable.add(obj);
+      if (collidable) {
+        if (visible) {
+          this.collidable.add(obj)
         } else {
-          this.collidable.delete(obj);
+          this.collidable.delete(obj)
         }
       }
     })

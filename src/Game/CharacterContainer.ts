@@ -1,14 +1,16 @@
 import { extras } from 'pixi.js'
 import Character from '../textures/Character'
-import Keyboard from './Keyboard'
+import stores from './../stores'
 import { Facing, Direction } from './types'
 import movementMatrix from './constants/movementMatrix'
 import Collider from './Collider'
 
+const Keyboard = stores.keyboardStore
+
 export class CharacterContainer {
   public sprite: PIXI.extras.AnimatedSprite
   private facing: Facing = Facing.DOWN
-  private movementSpeed: number = 2.4
+  private movementSpeed: number = 3
 
   constructor(x: number, y: number) {
     this.sprite = new extras.AnimatedSprite(Character[this.facing])
@@ -22,15 +24,9 @@ export class CharacterContainer {
   }
 
   public step(delta: number, collider: Collider): PIXI.DisplayObject[] {
-    if (Keyboard.debugSpeed) {
-      this.movementSpeed = 6
-    } else {
-      this.movementSpeed = 3
-    }
-
     const moveBy = delta * this.movementSpeed
 
-    Keyboard.update()
+    Keyboard.update() // TODO: Move to a steppable (once new steppables implemented)
 
     if (Keyboard.isMoving) {
       this.setFacing(Keyboard.facing)

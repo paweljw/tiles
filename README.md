@@ -19,3 +19,6 @@ This code is presented openly for reference purposes only. Unless specified othe
 Base tileset was released into the Public Domain at https://opengameart.org/content/dungeon-crawl-32x32-tiles. No rights are asserted to this artwork by Paweł J. Wal.
 
 Character sprites by Philip Lenssen of [outer-court.com](outer-court.com) and sourced from https://opengameart.org/content/700-sprites are licensed under CC-BY 3.0. No rights are asserted to this artwork by Paweł J. Wal.
+
+The FontStruction “Pixel-Art”
+(http://fontstruct.fontshop.com/fontstructions/show/332304) by “GerardBouchard.com” is licensed under a Creative Commons Attribution Share Alike license (http://creativecommons.org/licenses/by-sa/3.0/).

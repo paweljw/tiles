@@ -9,12 +9,14 @@ app.on('ready', async () => {
     width: 1280,
     height: 720,
     show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
     // fullscreen: !isDev // TODO: Move to config file
   })
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
-    if (isDev) { mainWindow.webContents.openDevTools() }
   })
 
   const devPath = 'http://localhost:1124'

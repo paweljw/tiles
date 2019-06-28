@@ -97,6 +97,7 @@
     "prebuild:atlas": "node build/tiles.js -w 2048 -h 1536 -s 32 -t 'tileset.png' > .parcel/renderer/tileset.json",
     "prebuild:character_atlas": "node build/tiles.js -w 512 -h 1440 -s 32 -t 'character32.png' --prefix='c' > .parcel/renderer/character32.json",
     "prebuild:copy": "shx cp src/assets/*.png .parcel/renderer",
+    "prebuild:copy_fonts": "shx cp src/assets/fonts/*.ttf .parcel/renderer",
     "prepare_assets": "run-s prebuild:*",
     "clean": "shx rm -f .parcel/*.*",
     "clean_release": "shx rm -rf release/*.*"
@@ -106,6 +107,7 @@
     "@inlet/react-pixi": "^0.6.0",
     "app-root-path": "^2.2.1",
     "electron-is-dev": "^1.1.0",
+    "electron-remote": "^1.3.0",
     "mobx": "^5.10.1",
     "mobx-react": "^6.1.1",
     "pixi-viewport": "^4.0.0-beta.0",

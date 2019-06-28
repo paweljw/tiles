@@ -54,6 +54,10 @@ class Game {
   }
 
   public loop = (delta: number) => {
+    const { gameStateStore: { paused } } = stores
+
+    if (paused) return
+
     this.steppables.forEach(steppable => {
       const dirties = steppable.step(delta, this.collider)
       dirties.forEach(dirty => this.cullMask.markDirty(dirty))
@@ -110,7 +114,7 @@ class Game {
       worldHeight: 3200
     })
 
-    viewport.decelerate().clamp({ direction: 'all' })
+    viewport.clamp({ direction: 'all' })
 
     return viewport
   }
@@ -120,8 +124,6 @@ class Game {
     gameStateStore.loading = false
 
     this.element.appendChild(this.app.view)
-    document.getElementById('app').classList.remove('app--loading')
-    document.getElementById('game').classList.remove('hidden')
     this.onResizeHandler()
     this.app.start()
   }

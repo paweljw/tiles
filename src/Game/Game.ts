@@ -5,7 +5,6 @@ import { Simple as Cull } from './culling'
 import scaleToWindow from './helpers/scaleToWindow'
 import { CharacterContainer } from './CharacterContainer'
 import getRandomInt from './helpers/getRandomInt'
-import { ISteppableInterface } from './types'
 import Collider from './Collider'
 import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
@@ -28,16 +27,12 @@ class Game {
     return app
   }
   private element: HTMLElement
-  private app: PIXI.Application
-  private char: CharacterContainer
-  private steppables: ISteppableInterface[] = []
   private cullMask: Cull
-  private viewport: Viewport
   private collider: Collider
 
   constructor(element: HTMLElement) {
     this.element = element
-    this.app = Game.buildApp()
+    stores.gameStateStore.app = Game.buildApp()
 
     // Ensure proper playfield resizing
     window.addEventListener('resize', this.onResizeHandler)
@@ -49,23 +44,25 @@ class Game {
   }
 
   public onResizeHandler = () => {
-    scaleToWindow(this.app.view)
+    scaleToWindow(stores.gameStateStore.app.view)
     scrollTo(0, 0)
   }
 
   public loop = (delta: number) => {
-    const { gameStateStore: { paused } } = stores
+    const { gameStateStore } = stores
 
-    if (paused) return
+    gameStateStore.fps = parseFloat((60 / delta).toFixed(2))
 
-    this.steppables.forEach(steppable => {
+    if (gameStateStore.paused) return
+
+    gameStateStore.steppables.forEach(steppable => {
       const dirties = steppable.step(delta, this.collider)
       dirties.forEach(dirty => this.cullMask.markDirty(dirty))
     })
 
-    if (this.viewport.dirty) {
-      this.cullMask.cull(this.viewport.getVisibleBounds())
-      this.viewport.dirty = false
+    if (stores.gameStateStore.viewport.dirty) {
+      this.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
+      stores.gameStateStore.viewport.dirty = false
     }
   }
 
@@ -123,34 +120,34 @@ class Game {
     const { gameStateStore } = stores
     gameStateStore.loading = false
 
-    this.element.appendChild(this.app.view)
+    this.element.appendChild(stores.gameStateStore.app.view)
     this.onResizeHandler()
-    this.app.start()
+    stores.gameStateStore.app.start()
   }
 
   public afterLoad = () => {
-    this.viewport = this.buildViewport()
+    stores.gameStateStore.viewport = this.buildViewport()
 
     this.cullMask = new Cull()
 
     const grass = this.buildLevelContainer()
 
-    this.viewport.addChild(grass)
+    stores.gameStateStore.viewport.addChild(grass)
 
-    this.char = new CharacterContainer(240, 720)
-    this.steppables.push(this.char)
+    stores.gameStateStore.char = new CharacterContainer(240, 720)
+    stores.gameStateStore.steppables.add(stores.gameStateStore.char)
 
-    this.viewport.addChild(this.char.sprite)
-    this.viewport.follow(this.char.sprite)
-    this.app.stage.addChild(this.viewport)
+    stores.gameStateStore.viewport.addChild(stores.gameStateStore.char.sprite)
+    stores.gameStateStore.viewport.follow(stores.gameStateStore.char.sprite)
+    stores.gameStateStore.app.stage.addChild(stores.gameStateStore.viewport)
 
-    this.cullMask.addObject(this.char.sprite, false, true)
+    this.cullMask.addObject(stores.gameStateStore.char.sprite, false, true)
 
-    this.cullMask.cull(this.viewport.getVisibleBounds())
+    this.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
 
     this.collider = new Collider(this.cullMask)
 
-    this.app.ticker.add(delta => this.loop(delta))
+    stores.gameStateStore.app.ticker.add(delta => this.loop(delta))
 
     this.startGame()
   }

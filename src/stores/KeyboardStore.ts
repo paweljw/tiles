@@ -8,6 +8,9 @@ export default class KeyboardStore {
   @observable public downPressed: boolean = false
   @observable public leftPressed: boolean = false
   @observable public rightPressed: boolean = false
+  @observable public isFiring: boolean = false
+
+  private lastDirection: Direction = Direction.UP
 
   @computed public get isMoving(): boolean {
     return this.upPressed || this.downPressed || this.leftPressed || this.rightPressed
@@ -26,23 +29,30 @@ export default class KeyboardStore {
   }
 
   @computed public get direction(): Direction {
+    let direction = null
+
     if (this.upPressed && this.rightPressed) {
-      return Direction.UP_RIGHT
+      direction = Direction.UP_RIGHT
     } else if (this.upPressed && this.leftPressed) {
-      return Direction.UP_LEFT
+      direction = Direction.UP_LEFT
     } else if (this.downPressed && this.rightPressed) {
-      return Direction.DOWN_RIGHT
+      direction = Direction.DOWN_RIGHT
     } else if (this.downPressed && this.leftPressed) {
-      return Direction.DOWN_LEFT
+      direction = Direction.DOWN_LEFT
     } else if (this.rightPressed) {
-      return Direction.RIGHT
+      direction = Direction.RIGHT
     } else if (this.leftPressed) {
-      return Direction.LEFT
+      direction = Direction.LEFT
     } else if (this.downPressed) {
-      return Direction.DOWN
-    } else {
-      return Direction.UP
+      direction = Direction.DOWN
+    } else if (this.upPressed) {
+      direction = Direction.UP
     }
+
+    direction = direction || this.lastDirection
+    this.lastDirection = direction
+
+    return direction
   }
 
   @action public update(): void {
@@ -52,5 +62,6 @@ export default class KeyboardStore {
     this.downPressed = PixiKeyboard.isKeyDown(...root.settingsStore.keysDown)
     this.leftPressed = PixiKeyboard.isKeyDown(...root.settingsStore.keysLeft)
     this.rightPressed = PixiKeyboard.isKeyDown(...root.settingsStore.keysRight)
+    this.isFiring = PixiKeyboard.isKeyDown(...root.settingsStore.keysFire)
   }
 }

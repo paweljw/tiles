@@ -16,7 +16,8 @@ export default class Collider {
   public collision(
     obj: PIXI.DisplayObject,
     newX: number,
-    newY: number
+    newY: number,
+    ignoredObjects: PIXI.DisplayObject[] = []
   ): boolean {
     const proposedAABB = calculateAABB(obj, newX, newY)
 
@@ -34,13 +35,17 @@ export default class Collider {
     const { collidable, objects } = this.source
 
     return Array.from(collidable).some(possible => {
-      if (obj === possible) {
+      if (obj === possible || ignoredObjects.some(ignored => ignored === possible)) {
         return false
       }
 
       const [l2, r2] = rectCornersFromAABB(objects.get(possible).AABB)
 
-      return !(r1.x < l2.x || r2.x < l1.x || r1.y < l2.y || r2.y < l1.y)
+      if (!(r1.x < l2.x || r2.x < l1.x || r1.y < l2.y || r2.y < l1.y)) {
+        return possible
+      } else {
+        return false
+      }
     })
   }
 }

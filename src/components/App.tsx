@@ -3,6 +3,7 @@ import { inject } from 'mobx-react'
 
 import Loading from './Loading/Loading'
 import Menu from './Menu/Menu'
+import FpsMeter from './FpsMeter/FpsMeter'
 import stores from '../stores'
 
 // @ts-ignore
@@ -43,6 +44,7 @@ const App = ({ loading, paused }: IAppProps | IAppFullProps) => (
         isDev={isDev}
         toggleFullScreen={toggleFullScreen} />
       : null}
+    {isDev && <FpsMeter />}
   </>
 )
 

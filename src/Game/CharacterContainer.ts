@@ -4,6 +4,7 @@ import stores from './../stores'
 import { Facing, Direction } from './types'
 import movementMatrix from './constants/movementMatrix'
 import Collider from './Collider'
+import { MissileContainer } from './MissileContainer';
 
 const Keyboard = stores.keyboardStore
 
@@ -11,6 +12,7 @@ export class CharacterContainer {
   public sprite: PIXI.extras.AnimatedSprite
   private facing: Facing = Facing.DOWN
   private movementSpeed: number = 3
+  private gcd: number = 0
 
   constructor(x: number, y: number) {
     this.sprite = new extras.AnimatedSprite(Character[this.facing])
@@ -26,7 +28,20 @@ export class CharacterContainer {
   public step(delta: number, collider: Collider): PIXI.DisplayObject[] {
     const moveBy = delta * this.movementSpeed
 
+    // console.log(delta)
+
+    let newGcd = this.gcd -= delta
+    if (newGcd < 0) newGcd = 0
+    this.gcd = newGcd
+
+    // console.log(this.gcd)
+
     Keyboard.update() // TODO: Move to a steppable (once new steppables implemented)
+
+    if (this.gcd === 0 && Keyboard.isFiring) {
+      stores.gameStateStore.steppables.add(new MissileContainer(this.sprite.x, this.sprite.y, Keyboard.direction))
+      this.gcd = 20
+    }
 
     if (Keyboard.isMoving) {
       this.setFacing(Keyboard.facing)
@@ -36,6 +51,7 @@ export class CharacterContainer {
       }
 
       this.move(moveBy, Keyboard.direction, collider)
+
       return [this.sprite]
     } else {
       if (this.sprite.playing) {

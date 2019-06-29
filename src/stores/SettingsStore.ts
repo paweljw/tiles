@@ -5,5 +5,6 @@ export default class SettingsStore {
   @observable public keysDown: string[] = ['ArrowDown', 'KeyS']
   @observable public keysLeft: string[] = ['ArrowLeft', 'KeyA']
   @observable public keysRight: string[] = ['ArrowRight', 'KeyH']
+  @observable public keysFire: string[] = ['Space']
   @observable public fullScreen: boolean = false
 }

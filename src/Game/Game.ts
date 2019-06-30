@@ -10,6 +10,7 @@ import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
 import Level from './Level'
 import stores from '../stores'
+import { SkeletonContainer } from './SkeletonContainer';
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -97,6 +98,23 @@ class Game {
             this.cullMask.addObject(tile, true, collidable)
           }
         }
+      }
+    }
+
+
+    for (let i = 1000; i >= 0;) {
+      const x = Math.floor(Math.random() * level.width)
+      const y = Math.floor(Math.random() * level.height)
+
+      const tileType = level.maze[level.locate({ x, y })]
+
+      if (tileType === 'floor') {
+        i--
+
+        const skeleton = new SkeletonContainer(x * 64 + 32, y * 64 + 32)
+        stores.gameStateStore.steppables.add(skeleton)
+        floor.addChild(skeleton.sprite)
+        this.cullMask.addObject(skeleton.sprite, false, true)
       }
     }
 

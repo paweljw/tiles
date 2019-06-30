@@ -28,13 +28,9 @@ export class CharacterContainer {
   public step(delta: number, collider: Collider): PIXI.DisplayObject[] {
     const moveBy = delta * this.movementSpeed
 
-    // console.log(delta)
-
     let newGcd = this.gcd -= delta
     if (newGcd < 0) newGcd = 0
     this.gcd = newGcd
-
-    // console.log(this.gcd)
 
     Keyboard.update() // TODO: Move to a steppable (once new steppables implemented)
 

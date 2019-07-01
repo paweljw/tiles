@@ -32,18 +32,30 @@ export class MissileContainer {
     return [this.sprite]
   }
 
+  public receiveDamage(_) { this.removeSelf() }
+
+  private removeSelf() {
+    stores.gameStateStore.viewport.removeChild(this.sprite)
+    stores.gameStateStore.steppables.delete(this)
+  }
+
   private move(moveBy: number, collider: Collider): void {
     const [xMod, yMod] = movementMatrix[this.direction]
 
     const proposedX = this.sprite.x + xMod * moveBy
     const proposedY = this.sprite.y + yMod * moveBy
 
-    if (!collider.collision(this.sprite, proposedX, proposedY, [stores.gameStateStore.char.sprite])) {
+    const collidedWith = collider.collision(this.sprite, proposedX, proposedY, [stores.gameStateStore.char.sprite])
+    if (!collidedWith) {
       this.sprite.x = proposedX
       this.sprite.y = proposedY
     } else {
-      stores.gameStateStore.viewport.removeChild(this.sprite)
-      stores.gameStateStore.steppables.delete(this)
+      this.removeSelf()
+
+      const collidedWithContainer =
+        Array.from(stores.gameStateStore.steppables.values()).find(item => item.sprite && item.sprite === collidedWith)
+
+      collidedWithContainer && collidedWithContainer.receiveDamage(1)
     }
   }
 }

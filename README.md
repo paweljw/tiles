@@ -22,3 +22,5 @@ Character sprites by Philip Lenssen of [outer-court.com](outer-court.com) and so
 
 The FontStruction “Pixel-Art”
 (http://fontstruct.fontshop.com/fontstructions/show/332304) by “GerardBouchard.com” is licensed under a Creative Commons Attribution Share Alike license (http://creativecommons.org/licenses/by-sa/3.0/).
+
+Free music might come from https://eluukkanen.bandcamp.com/album/free-music-album-vol-1

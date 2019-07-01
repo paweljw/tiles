@@ -28,8 +28,6 @@ class Game {
     return app
   }
   private element: HTMLElement
-  private cullMask: Cull
-  private collider: Collider
 
   constructor(element: HTMLElement) {
     this.element = element
@@ -57,19 +55,18 @@ class Game {
     if (gameStateStore.paused) return
 
     gameStateStore.steppables.forEach(steppable => {
-      const dirties = steppable.step(delta, this.collider)
-      dirties.forEach(dirty => this.cullMask.markDirty(dirty))
+      const dirties = steppable.step(delta, stores.gameStateStore.collider)
+      dirties.forEach(dirty => stores.gameStateStore.cullMask.markDirty(dirty))
     })
 
     if (stores.gameStateStore.viewport.dirty) {
-      this.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
+      stores.gameStateStore.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
       stores.gameStateStore.viewport.dirty = false
     }
   }
 
   public buildLevelContainer = () => {
     const level = new Level(50, 50)
-    const floor = new Container()
 
     // TODO: Move all of the tile generation to Level
 
@@ -93,16 +90,16 @@ class Game {
             tile.x = baseX + xOffset * 32
             tile.y = baseY + yOffset * 32
 
-            floor.addChild(tile)
+            stores.gameStateStore.viewport.addChild(tile)
 
-            this.cullMask.addObject(tile, true, collidable)
+            stores.gameStateStore.cullMask.addObject(tile, true, collidable)
           }
         }
       }
     }
 
 
-    for (let i = 1000; i >= 0;) {
+    for (let i = 200; i >= 0;) {
       const x = Math.floor(Math.random() * level.width)
       const y = Math.floor(Math.random() * level.height)
 
@@ -113,12 +110,12 @@ class Game {
 
         const skeleton = new SkeletonContainer(x * 64 + 32, y * 64 + 32)
         stores.gameStateStore.steppables.add(skeleton)
-        floor.addChild(skeleton.sprite)
-        this.cullMask.addObject(skeleton.sprite, false, true)
+        stores.gameStateStore.viewport.addChild(skeleton.sprite)
+        stores.gameStateStore.cullMask.addObject(skeleton.sprite, false, true)
       }
     }
 
-    return floor
+    return stores.gameStateStore.viewport
   }
 
   public buildViewport = () => {
@@ -146,11 +143,9 @@ class Game {
   public afterLoad = () => {
     stores.gameStateStore.viewport = this.buildViewport()
 
-    this.cullMask = new Cull()
+    stores.gameStateStore.cullMask = new Cull()
 
-    const grass = this.buildLevelContainer()
-
-    stores.gameStateStore.viewport.addChild(grass)
+    this.buildLevelContainer()
 
     stores.gameStateStore.char = new CharacterContainer(240, 720)
     stores.gameStateStore.steppables.add(stores.gameStateStore.char)
@@ -159,11 +154,11 @@ class Game {
     stores.gameStateStore.viewport.follow(stores.gameStateStore.char.sprite)
     stores.gameStateStore.app.stage.addChild(stores.gameStateStore.viewport)
 
-    this.cullMask.addObject(stores.gameStateStore.char.sprite, false, true)
+    stores.gameStateStore.cullMask.addObject(stores.gameStateStore.char.sprite, false, true)
 
-    this.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
+    stores.gameStateStore.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
 
-    this.collider = new Collider(this.cullMask)
+    stores.gameStateStore.collider = new Collider(stores.gameStateStore.cullMask)
 
     stores.gameStateStore.app.ticker.add(delta => this.loop(delta))
 

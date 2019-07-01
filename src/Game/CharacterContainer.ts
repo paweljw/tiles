@@ -57,6 +57,8 @@ export class CharacterContainer {
     }
   }
 
+  public receiveDamage(_) { /* TODO: No-op! */ }
+
   private setFacing(facing: Facing): void {
     if (this.facing === facing) {
       return

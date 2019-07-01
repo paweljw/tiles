@@ -18,7 +18,7 @@ export default class Collider {
     newX: number,
     newY: number,
     ignoredObjects: PIXI.DisplayObject[] = []
-  ): boolean {
+  ): PIXI.DisplayObject {
     const proposedAABB = calculateAABB(obj, newX, newY)
 
     const [prel1, prer1] = rectCornersFromAABB(proposedAABB)
@@ -34,7 +34,7 @@ export default class Collider {
 
     const { collidable, objects } = this.source
 
-    return Array.from(collidable).some(possible => {
+    return Array.from(collidable).find(possible => {
       if (obj === possible || ignoredObjects.some(ignored => ignored === possible)) {
         return false
       }

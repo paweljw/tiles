@@ -22,6 +22,11 @@ class Simple {
     }
   }
 
+  public removeObject(obj: PIXI.DisplayObject) {
+    this.objects.delete(obj)
+    this.collidable.delete(obj)
+  }
+
   public addObjects(
     objs: PIXI.DisplayObject[],
     isStatic: boolean = true,

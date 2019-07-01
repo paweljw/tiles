@@ -4,6 +4,11 @@ export interface ISteppableInterface {
   step(delta: number, collider: Collider): PIXI.DisplayObject[]
 }
 
+export interface ISteppableSprite extends ISteppableInterface {
+  sprite: PIXI.DisplayObject
+  receiveDamage(damage: number): void
+}
+
 export enum Facing {
   UP = 'cUp',
   DOWN = 'cDown',

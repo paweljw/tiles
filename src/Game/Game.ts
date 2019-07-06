@@ -28,6 +28,7 @@ class Game {
     return app
   }
   private element: HTMLElement
+  private level: Level
 
   constructor(element: HTMLElement) {
     this.element = element
@@ -66,13 +67,13 @@ class Game {
   }
 
   public buildLevelContainer = () => {
-    const level = new Level(50, 50)
+    this.level = new Level(50, 50)
 
     // TODO: Move all of the tile generation to Level
 
-    for (let i = 0; i < level.width; i++) {
-      for (let j = 0; j < level.height; j++) {
-        const tileType = level.maze[level.locate({ x: i, y: j })]
+    for (let i = 0; i < this.level.width; i++) {
+      for (let j = 0; j < this.level.height; j++) {
+        const tileType = this.level.maze[this.level.locate({ x: i, y: j })]
 
         const collidable = tileType === 'wall'
 
@@ -100,10 +101,10 @@ class Game {
 
 
     for (let i = 200; i >= 0;) {
-      const x = Math.floor(Math.random() * level.width)
-      const y = Math.floor(Math.random() * level.height)
+      const x = Math.floor(Math.random() * this.level.width)
+      const y = Math.floor(Math.random() * this.level.height)
 
-      const tileType = level.maze[level.locate({ x, y })]
+      const tileType = this.level.maze[this.level.locate({ x, y })]
 
       if (tileType === 'floor') {
         const skeletonX = x * 64 + 32
@@ -154,7 +155,7 @@ class Game {
 
     this.buildLevelContainer()
 
-    stores.gameStateStore.char = new CharacterContainer(240, 720)
+    stores.gameStateStore.char = new CharacterContainer(240, 3020)
     stores.gameStateStore.steppables.add(stores.gameStateStore.char)
 
     stores.gameStateStore.viewport.addChild(stores.gameStateStore.char.sprite)
@@ -165,7 +166,7 @@ class Game {
 
     stores.gameStateStore.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
 
-    stores.gameStateStore.collider = new Collider(stores.gameStateStore.cullMask)
+    stores.gameStateStore.collider = new Collider(stores.gameStateStore.cullMask, this.level)
 
     stores.gameStateStore.app.ticker.add(delta => this.loop(delta))
 

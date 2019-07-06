@@ -1,6 +1,7 @@
 import { ICollidableSource } from './types'
 import calculateAABB from './helpers/calculateAABB'
 import rectCornersFromAABB from './helpers/rectCornersFromAABB'
+import Level from './Level'
 
 const TOP_HITBOX_CHILL_FACTOR = 5
 const BOTTOM_HITBOX_CHILL_FACTOR = 2
@@ -8,9 +9,11 @@ const BOTTOM_HITBOX_CHILL_FACTOR = 2
 // TODO: Involve level bounds
 export default class Collider {
   public source: ICollidableSource
+  public level: Level
 
-  constructor(source: ICollidableSource) {
+  constructor(source: ICollidableSource, level: Level) {
     this.source = source
+    this.level = level
   }
 
   public collision(
@@ -30,6 +33,10 @@ export default class Collider {
     const r1 = {
       x: prer1.x,
       y: prer1.y
+    }
+
+    if (r1.x >= this.level.pixelWidth || l1.x <= 0 || r1.y >= this.level.pixelHeight || l1.y <= 0) {
+      return new PIXI.DisplayObject()
     }
 
     const { collidable, objects } = this.source

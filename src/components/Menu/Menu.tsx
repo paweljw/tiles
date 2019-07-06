@@ -1,6 +1,7 @@
 import * as React from 'react'
 import './Menu.scss'
 import { observer, inject } from 'mobx-react'
+import KeyboardRow from './KeyboardRow/KeyboardRow';
 
 interface IMenuProps {
   onOpenDevTools: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -50,7 +51,6 @@ class Menu extends React.Component<IMenuProps> {
       keysLeft,
       keysRight,
       keysFire,
-      setKey,
     } = this.props
     const { keyboardOpen, setting, settingIndex } = this.state
 
@@ -77,101 +77,41 @@ class Menu extends React.Component<IMenuProps> {
         )}
         {keyboardOpen && (
           <div className='keyboard'>
-            <div className='keyboard__row'>
-              <div className='keyboard__option'>Up</div>
-              <button
-                onClick={() => this.beginSetting('keysUp', 0)}
-                className='keyboard__button'
-              >
-                {setting === 'keysUp' && settingIndex === 0
-                  ? 'Setting...'
-                  : displayKey(keysUp[0])}
-              </button>
-              <button
-                onClick={() => this.beginSetting('keysUp', 1)}
-                className='keyboard__button'
-              >
-                {setting === 'keysUp' && settingIndex === 1
-                  ? 'Setting...'
-                  : displayKey(keysUp[1])}
-              </button>
-            </div>
-            <div className='keyboard__row'>
-              <div className='keyboard__option'>Down</div>
-              <button
-                onClick={() => this.beginSetting('keysDown', 0)}
-                className='keyboard__button'
-              >
-                {setting === 'keysDown' && settingIndex === 0
-                  ? 'Setting...'
-                  : displayKey(keysDown[0])}
-              </button>
-              <button
-                onClick={() => this.beginSetting('keysDown', 1)}
-                className='keyboard__button'
-              >
-                {setting === 'keysDown' && settingIndex === 1
-                  ? 'Setting...'
-                  : displayKey(keysDown[1])}
-              </button>
-            </div>
-            <div className='keyboard__row'>
-              <div className='keyboard__option'>Left</div>
-              <button
-                onClick={() => this.beginSetting('keysLeft', 0)}
-                className='keyboard__button'
-              >
-                {setting === 'keysLeft' && settingIndex === 0
-                  ? 'Setting...'
-                  : displayKey(keysLeft[0])}
-              </button>
-              <button
-                onClick={() => this.beginSetting('keysLeft', 1)}
-                className='keyboard__button'
-              >
-                {setting === 'keysLeft' && settingIndex === 1
-                  ? 'Setting...'
-                  : displayKey(keysLeft[1])}
-              </button>
-            </div>
-            <div className='keyboard__row'>
-              <div className='keyboard__option'>Right</div>
-              <button
-                onClick={() => this.beginSetting('keysRight', 0)}
-                className='keyboard__button'
-              >
-                {setting === 'keysRight' && settingIndex === 0
-                  ? 'Setting...'
-                  : displayKey(keysRight[0])}
-              </button>
-              <button
-                onClick={() => this.beginSetting('keysRight', 1)}
-                className='keyboard__button'
-              >
-                {setting === 'keysRight' && settingIndex === 1
-                  ? 'Setting...'
-                  : displayKey(keysRight[1])}
-              </button>
-            </div>
-            <div className='keyboard__row'>
-              <div className='keyboard__option'>Fire</div>
-              <button
-                onClick={() => this.beginSetting('keysFire', 0)}
-                className='keyboard__button'
-              >
-                {setting === 'keysFire' && settingIndex === 0
-                  ? 'Setting...'
-                  : displayKey(keysFire[0])}
-              </button>
-              <button
-                onClick={() => this.beginSetting('keysFire', 1)}
-                className='keyboard__button'
-              >
-                {setting === 'keysFire' && settingIndex === 1
-                  ? 'Setting...'
-                  : displayKey(keysFire[1])}
-              </button>
-            </div>
+            <KeyboardRow
+              settingFirst={setting === 'keysUp' && settingIndex === 0}
+              settingSecond={setting === 'keysUp' && settingIndex === 1}
+              label='Up'
+              keyType='keysUp'
+              callback={this.beginSetting}
+              keys={keysUp} />
+            <KeyboardRow
+              settingFirst={setting === 'keysDown' && settingIndex === 0}
+              settingSecond={setting === 'keysDown' && settingIndex === 1}
+              label='Down'
+              keyType='keysDown'
+              callback={this.beginSetting}
+              keys={keysDown} />
+            <KeyboardRow
+              settingFirst={setting === 'keysLeft' && settingIndex === 0}
+              settingSecond={setting === 'keysLeft' && settingIndex === 1}
+              label='Left'
+              keyType='keysLeft'
+              callback={this.beginSetting}
+              keys={keysLeft} />
+            <KeyboardRow
+              settingFirst={setting === 'keysRight' && settingIndex === 0}
+              settingSecond={setting === 'keysRight' && settingIndex === 1}
+              label='Right'
+              keyType='keysRight'
+              callback={this.beginSetting}
+              keys={keysRight} />
+            <KeyboardRow
+              settingFirst={setting === 'keysFire' && settingIndex === 0}
+              settingSecond={setting === 'keysFire' && settingIndex === 1}
+              label='Attack'
+              keyType='keysFire'
+              callback={this.beginSetting}
+              keys={keysFire} />
           </div>
         )}
       </div>

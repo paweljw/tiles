@@ -1,1 +1,1 @@
-export const fps: string
+export const fps: string;

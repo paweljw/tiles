@@ -68,6 +68,9 @@
     font-family: 'PixelArt';
     outline: none;
     margin-right: 10%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

@@ -7,6 +7,18 @@ const displayKey = (key: string | null): string => {
   if (key === ' ') {
     return 'Spacebar'
   }
+  if (key === 'ShiftLeft') {
+    return 'LShift'
+  }
+  if (key === 'ShiftRight') {
+    return 'RShift'
+  }
+  if (key === 'ControlLeft') {
+    return 'LCtrl'
+  }
+  if (key === 'ControlRight') {
+    return 'RCtrl'
+  }
   return key.replace('Key', '').replace('Arrow', '')
 }
 

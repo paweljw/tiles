@@ -106,12 +106,19 @@ class Game {
       const tileType = level.maze[level.locate({ x, y })]
 
       if (tileType === 'floor') {
-        i--
+        const skeletonX = x * 64 + 32
+        const skeletonY = y * 64 + 32
 
-        const skeleton = new SkeletonContainer(x * 64 + 32, y * 64 + 32)
-        stores.gameStateStore.steppables.add(skeleton)
-        stores.gameStateStore.viewport.addChild(skeleton.sprite)
-        stores.gameStateStore.cullMask.addObject(skeleton.sprite, false, true)
+        if (!Array.from(stores.gameStateStore.steppables.entries()).find(
+          ([item, _]) => item.sprite.x === skeletonX && item.sprite.y === skeletonY)
+        ) {
+          i--
+
+          const skeleton = new SkeletonContainer(skeletonX, skeletonY)
+          stores.gameStateStore.steppables.add(skeleton)
+          stores.gameStateStore.viewport.addChild(skeleton.sprite)
+          stores.gameStateStore.cullMask.addObject(skeleton.sprite, false, true)
+        }
       }
     }
 

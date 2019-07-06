@@ -24,12 +24,12 @@ export default class Collider {
     const [prel1, prer1] = rectCornersFromAABB(proposedAABB)
 
     const l1 = {
-      x: prel1.x + TOP_HITBOX_CHILL_FACTOR,
-      y: prel1.y + TOP_HITBOX_CHILL_FACTOR
+      x: prel1.x,
+      y: prel1.y
     }
     const r1 = {
-      x: prer1.x - BOTTOM_HITBOX_CHILL_FACTOR,
-      y: prer1.y - BOTTOM_HITBOX_CHILL_FACTOR
+      x: prer1.x,
+      y: prer1.y
     }
 
     const { collidable, objects } = this.source

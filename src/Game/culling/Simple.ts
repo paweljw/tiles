@@ -61,11 +61,9 @@ class Simple {
       obj.renderable = visible
 
       if (collidable) {
-        if (visible) {
-          this.collidable.add(obj)
-        } else {
-          this.collidable.delete(obj)
-        }
+        this.collidable.add(obj)
+      } else {
+        this.collidable.delete(obj)
       }
     })
   }

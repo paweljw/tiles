@@ -22,6 +22,7 @@ export class CharacterContainer {
     this.sprite.anchor.set(0.5)
     this.setFacing(this.facing)
     this.sprite.tint = 0xcccccc
+    this.sprite.hitArea = new PIXI.Rectangle(3, 2, 26, 29)
     this.sprite.stop()
   }
 
@@ -36,7 +37,7 @@ export class CharacterContainer {
 
     if (this.gcd === 0 && Keyboard.isFiring) {
       stores.gameStateStore.steppables.add(new MissileContainer(this.sprite.x, this.sprite.y, Keyboard.direction))
-      this.gcd = 20
+      this.gcd = 10
     }
 
     if (Keyboard.isMoving) {

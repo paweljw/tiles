@@ -9,6 +9,7 @@ export class MissileContainer {
   public sprite: PIXI.extras.AnimatedSprite
   private movementSpeed: number = 12
   private direction: Direction
+  private distanceTravelled: number = 0
 
   constructor(x: number, y: number, direction: Direction) {
     this.sprite = new extras.AnimatedSprite(Missile.missile)
@@ -17,6 +18,7 @@ export class MissileContainer {
     this.sprite.width = 13
     this.sprite.height = 13
     this.sprite.animationSpeed = 0.05 * this.movementSpeed
+    this.sprite.hitArea = new PIXI.Rectangle(2, 2, 30, 30)
     this.sprite.anchor.set(0.5)
     this.sprite.play()
     this.direction = direction
@@ -45,11 +47,20 @@ export class MissileContainer {
     const proposedX = this.sprite.x + xMod * moveBy
     const proposedY = this.sprite.y + yMod * moveBy
 
+    this.distanceTravelled += Math.sqrt(
+      Math.pow((proposedX - this.sprite.x), 2) + Math.pow((proposedY - this.sprite.y), 2)
+    )
+
+    if (this.distanceTravelled > 200) {
+      this.removeSelf()
+      return
+    }
+
     const collidedWith = collider.collision(this.sprite, proposedX, proposedY, [stores.gameStateStore.char.sprite])
-    if (!collidedWith) {
-      this.sprite.x = proposedX
-      this.sprite.y = proposedY
-    } else {
+    this.sprite.x = proposedX
+    this.sprite.y = proposedY
+
+    if (collidedWith) {
       this.removeSelf()
 
       const collidedWithContainer =

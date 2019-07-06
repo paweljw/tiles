@@ -5,9 +5,9 @@ import Loading from './Loading/Loading'
 import Menu from './Menu/Menu'
 import FpsMeter from './FpsMeter/FpsMeter'
 import stores from '../stores'
-import configPath from '../helpers/configPath';
-import writeConfig from '../helpers/writeConfig';
-import getConfig from '../helpers/getConfig';
+import configPath from '../helpers/configPath'
+import writeConfig from '../helpers/writeConfig'
+import getConfig from '../helpers/getConfig'
 
 // @ts-ignore
 const { remote } = window.require('electron')

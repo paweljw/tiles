@@ -4,7 +4,7 @@ import stores from './../stores'
 import { Facing, Direction } from './types'
 import movementMatrix from './constants/movementMatrix'
 import Collider from './Collider'
-import { MissileContainer } from './MissileContainer';
+import { MissileContainer } from './MissileContainer'
 
 const Keyboard = stores.keyboardStore
 

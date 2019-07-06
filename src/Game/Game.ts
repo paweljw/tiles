@@ -10,7 +10,7 @@ import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
 import Level from './Level'
 import stores from '../stores'
-import { SkeletonContainer } from './SkeletonContainer';
+import { SkeletonContainer } from './SkeletonContainer'
 
 class Game {
   public static buildApp = (): PIXI.Application => {

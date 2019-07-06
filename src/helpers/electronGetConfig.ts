@@ -1,14 +1,8 @@
 import electronConfigPath from './electronConfigPath'
+import initialConfig from './initialConfig'
 
 // @ts-ignore
 const fs = require('fs')
-
-const INITIAL_CONFIG = {
-  version: 1,
-  fullscreen: false,
-  resw: 1280,
-  resh: 720,
-}
 
 export default () => {
   const confPath = electronConfigPath()
@@ -16,7 +10,7 @@ export default () => {
   if (fs.existsSync(confPath)) {
     return JSON.parse(fs.readFileSync(confPath))
   } else {
-    fs.writeFileSync(confPath, JSON.stringify(INITIAL_CONFIG), { flag: 'w+' })
-    return INITIAL_CONFIG
+    fs.writeFileSync(confPath, JSON.stringify(initialConfig), { flag: 'w+' })
+    return initialConfig
   }
 }

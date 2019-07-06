@@ -3,7 +3,7 @@ import stores from './../stores'
 import { Direction } from './types'
 import movementMatrix from './constants/movementMatrix'
 import Collider from './Collider'
-import Missile from '../textures/Missile';
+import Missile from '../textures/Missile'
 
 export class MissileContainer {
   public sprite: PIXI.extras.AnimatedSprite

@@ -1,7 +1,7 @@
 @import '../../assets/fonts/pixelart.css';
 
 .Menu {
-  width: 30%;
+  width: 50%;
   background: #000;
   color: white;
   padding: 10px;
@@ -15,6 +15,7 @@
   margin: auto auto;
   text-align: center;
   padding: 40px;
+  overflow: auto;
 
   h1 {
     margin: 0 0 40px 0;
@@ -22,7 +23,7 @@
     animation: fadeOut 1s ease-in-out 0s infinite alternate;
   }
 
-  button, button:focus {
+  .button, .button:focus {
     width: 80%;
     padding: 15px 0px;
     background: #333;
@@ -36,6 +37,37 @@
     color: #fff;
     font-family: 'PixelArt';
     outline: none;
+  }
+}
+
+.keyboard {
+  display: table;
+  width: 100%;
+  border-spacing: 25px;
+
+  &__row {
+    display: table-row;
+  }
+
+  &__option {
+    width: 50%;
+    display: table-cell;
+  }
+
+  &__button, &__button:focus {
+    width: 33%;
+    display: table-cell !important;
+    background: #333;
+    box-shadow:
+      2px 0 white,
+      -2px 0 white,
+      0 -2px white,
+      0 2px white;
+    border: none;
+    color: #fff;
+    font-family: 'PixelArt';
+    outline: none;
+    margin-right: 10%;
   }
 }
 

@@ -17,7 +17,11 @@ stores.settingsStore.fullScreen = config.fullscreen
 stores.settingsStore.width = config.resw
 stores.settingsStore.height = config.resh
 
-console.log('setting fullscreen', stores.settingsStore.fullScreen)
+stores.settingsStore.keysUp = config.keyboard.keysUp
+stores.settingsStore.keysDown = config.keyboard.keysDown
+stores.settingsStore.keysRight = config.keyboard.keysRight
+stores.settingsStore.keysLeft = config.keyboard.keysLeft
+stores.settingsStore.keysFire = config.keyboard.keysFire
 
 ReactDOM.render(
   <Provider {...stores}>

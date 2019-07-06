@@ -7,4 +7,6 @@ export default class SettingsStore {
   @observable public keysRight: string[] = ['ArrowRight', 'KeyH']
   @observable public keysFire: string[] = ['Space']
   @observable public fullScreen: boolean = false
+  @observable public width: number = 1280
+  @observable public height: number = 720
 }

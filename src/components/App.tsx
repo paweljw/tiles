@@ -5,6 +5,9 @@ import Loading from './Loading/Loading'
 import Menu from './Menu/Menu'
 import FpsMeter from './FpsMeter/FpsMeter'
 import stores from '../stores'
+import configPath from '../helpers/configPath';
+import writeConfig from '../helpers/writeConfig';
+import getConfig from '../helpers/getConfig';
 
 // @ts-ignore
 const { remote } = window.require('electron')
@@ -31,7 +34,11 @@ const exitGame = (_: React.MouseEvent<HTMLButtonElement>) => {
 }
 
 const toggleFullScreen = () => {
-  stores.settingsStore.fullScreen = !stores.settingsStore.fullScreen
+  const newFullScreen = !stores.settingsStore.fullScreen
+
+  writeConfig({ ...getConfig(), fullscreen: newFullScreen })
+
+  stores.settingsStore.fullScreen = newFullScreen
 }
 
 const App = ({ loading, paused }: IAppProps | IAppFullProps) => (

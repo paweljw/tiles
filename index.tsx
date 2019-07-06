@@ -6,9 +6,18 @@ import { autorun } from 'mobx'
 import App from './src/components/App'
 import Game from './src/game/Game'
 import stores from './src/stores'
+import getConfig from './src/helpers/getConfig'
 
 // @ts-ignore
 const { remote } = window.require('electron')
+
+const config = getConfig()
+
+stores.settingsStore.fullScreen = config.fullscreen
+stores.settingsStore.width = config.resw
+stores.settingsStore.height = config.resh
+
+console.log('setting fullscreen', stores.settingsStore.fullScreen)
 
 ReactDOM.render(
   <Provider {...stores}>
@@ -35,14 +44,19 @@ autorun(() => {
     appElement.classList.remove('app--paused')
   }
 
-  const isFullscreen = remote.BrowserWindow.getFocusedWindow().isFullScreen()
+  const focusedWindow = remote.BrowserWindow.getFocusedWindow()
+  const shouldBeFullScreen = stores.settingsStore.fullScreen
 
-  if (stores.settingsStore.fullScreen && !isFullscreen) {
-    remote.BrowserWindow.getFocusedWindow().setFullScreen(true)
-  }
+  if (focusedWindow) {
+    const isFullscreen = focusedWindow.isFullScreen()
 
-  if (!stores.settingsStore.fullScreen && isFullscreen) {
-    remote.BrowserWindow.getFocusedWindow().setFullScreen(false)
+    if (shouldBeFullScreen && !isFullscreen) {
+      focusedWindow.setFullScreen(true)
+    }
+
+    if (!shouldBeFullScreen && isFullscreen) {
+      focusedWindow.setFullScreen(false)
+    }
   }
 })
 

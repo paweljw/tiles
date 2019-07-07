@@ -2,7 +2,7 @@ import { observable } from 'mobx'
 import { Viewport } from 'pixi-viewport'
 
 import { ISteppableSprite } from '../game/types'
-import { CharacterContainer } from '../game/CharacterContainer'
+import { CharacterContainer } from '../game/containers/CharacterContainer'
 import { Simple as Cull } from '../game/culling'
 import Collider from '../game/Collider'
 

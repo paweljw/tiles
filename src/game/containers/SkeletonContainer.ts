@@ -1,10 +1,10 @@
 import { extras, Graphics } from 'pixi.js'
-import stores from './../stores'
-import { Facing, Direction } from './types'
-import movementMatrix from './constants/movementMatrix'
-import Collider from './Collider'
-import Skeleton from '../textures/Skeleton'
-import getRandomInt from './helpers/getRandomInt'
+import stores from '../../stores'
+import { Facing, Direction } from '../types'
+import movementMatrix from '../constants/movementMatrix'
+import Collider from '../Collider'
+import Skeleton from '../../textures/Skeleton'
+import getRandomInt from '../helpers/getRandomInt'
 
 const MAX_HP = 10
 

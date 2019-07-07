@@ -3,14 +3,14 @@ import { Viewport } from 'pixi-viewport'
 import { Simple as Cull } from './culling'
 
 import scaleToWindow from './helpers/scaleToWindow'
-import { CharacterContainer } from './CharacterContainer'
+import { CharacterContainer } from './containers/CharacterContainer'
 import getRandomInt from './helpers/getRandomInt'
 import Collider from './Collider'
 import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
 import Level from './Level'
 import stores from '../stores'
-import { SkeletonContainer } from './SkeletonContainer'
+import { SkeletonContainer } from './containers/SkeletonContainer'
 
 class Game {
   public static buildApp = (): PIXI.Application => {

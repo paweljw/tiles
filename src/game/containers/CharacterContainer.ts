@@ -1,9 +1,9 @@
 import { extras } from 'pixi.js'
-import Character from '../textures/Character'
-import stores from './../stores'
-import { Facing, Direction } from './types'
-import movementMatrix from './constants/movementMatrix'
-import Collider from './Collider'
+import Character from '../../textures/Character'
+import stores from '../../stores'
+import { Facing, Direction } from '../types'
+import movementMatrix from '../constants/movementMatrix'
+import Collider from '../Collider'
 import { MissileContainer } from './MissileContainer'
 
 const Keyboard = stores.keyboardStore
@@ -21,7 +21,7 @@ export class CharacterContainer {
     this.sprite.animationSpeed = 0.05 * this.movementSpeed
     this.sprite.anchor.set(0.5)
     this.setFacing(this.facing)
-    this.sprite.tint = 0xcccccc
+    this.sprite.tint = 0xeeeeee
     this.sprite.hitArea = new PIXI.Rectangle(3, 2, 26, 29)
     this.sprite.stop()
   }

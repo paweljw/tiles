@@ -16,4 +16,5 @@ export default class GameStateStore {
   @observable public char: CharacterContainer
   @observable public cullMask: Cull
   @observable public collider: Collider
+  @observable public lightableObjects: Set<any> = new Set()
 }

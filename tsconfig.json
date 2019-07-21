@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ES5",
     "jsx": "preserve",
     "sourceMap": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "esModuleInterop": true
   },
-  "includes" :[
+  "includes": [
     "./**/*.d.ts"
   ],
 }

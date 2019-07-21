@@ -6,7 +6,7 @@ export interface ISteppableInterface {
 
 export interface ISteppableSprite extends ISteppableInterface {
   sprite: PIXI.DisplayObject
-  receiveDamage(damage: number): void
+  receiveDamage(damage: number, hp?: number): void
 }
 
 export enum Facing {

@@ -10,7 +10,9 @@ import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
 import Level from './Level'
 import stores from '../stores'
-import { SkeletonContainer } from './containers/SkeletonContainer'
+import SkeletonContainer from './containers/SkeletonContainer'
+import WallContainer from './containers/WallContainer'
+import FloorContainer from './containers/FloorContainer'
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -84,17 +86,15 @@ class Game {
         for (let xOffset = 0; xOffset < 2; xOffset++) {
           for (let yOffset = 0; yOffset < 2; yOffset++) {
             const random = getRandomInt(5) + 1
-            const texture = collidable
-              ? Wall[`wall${random}`]
-              : Floor[`floor${random}`]
-            const tile = new Sprite(texture)
-
-            tile.x = baseX + xOffset * 32
-            tile.y = baseY + yOffset * 32
-
-            stores.gameStateStore.viewport.addChild(tile)
-
-            stores.gameStateStore.cullMask.addObject(tile, true, collidable)
+            if (collidable) {
+              const container = new WallContainer(baseX + xOffset * 32, baseY + yOffset * 32, Wall[`wall${random}`])
+              stores.gameStateStore.viewport.addChild(container.sprite)
+              stores.gameStateStore.cullMask.addObject(container.sprite, true, collidable)
+            } else {
+              const container = new FloorContainer(baseX + xOffset * 32, baseY + yOffset * 32, Floor[`floor${random}`])
+              stores.gameStateStore.viewport.addChild(container.sprite)
+              stores.gameStateStore.cullMask.addObject(container.sprite, true, collidable)
+            }
           }
         }
       }

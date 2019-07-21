@@ -44,7 +44,8 @@ class Game {
   }
 
   public onResizeHandler = () => {
-    scaleToWindow(stores.gameStateStore.app.view)
+    const ret = scaleToWindow(stores.gameStateStore.app.view)
+    document.getElementById('root').style.zoom = ret.toString()
     scrollTo(0, 0)
   }
 

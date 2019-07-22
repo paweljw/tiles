@@ -10,4 +10,8 @@ export default class WallContainer {
     this.sprite.x = x
     this.sprite.y = y
   }
+
+  public get visible() {
+    return this.sprite.visible || this.sprite.renderable
+  }
 }

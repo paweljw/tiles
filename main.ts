@@ -21,7 +21,7 @@ app.on('ready', async () => {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
   })
 
   const devPath = 'http://localhost:1124'

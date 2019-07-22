@@ -1,6 +1,6 @@
 // Maze construction heavily based on https://github.com/semibran/maze
 
-import { Point } from './types'
+import { IPoint } from './types'
 
 const TILE_WIDTH = 32
 const TILE_HEIGHT = 32
@@ -27,7 +27,11 @@ class Level {
     this.maze = this.buildInternalMaze()
   }
 
-  public locate(cell: Point) {
+  public tileAt(cell: IPoint) {
+    return this.maze[this.locate(cell)]
+  }
+
+  public locate(cell: IPoint) {
     return cell.y * this.width + cell.x
   }
 
@@ -37,10 +41,10 @@ class Level {
     return this.connect(maze)
   }
 
-  private generateMaze(nodes: Point[]) {
+  private generateMaze(nodes: IPoint[]) {
     let node = this.choose(nodes)
     const stack = [node]
-    const maze: Map<Point, Point[]> = new Map()
+    const maze: Map<IPoint, IPoint[]> = new Map()
 
     for (const noder of nodes) {
       maze.set(noder, [])
@@ -64,7 +68,7 @@ class Level {
     return maze
   }
 
-  private cells(): Point[] {
+  private cells(): IPoint[] {
     const { width, height } = this
     const cells = new Array(width * height)
     for (let y = 0; y < height; y++) {
@@ -76,15 +80,15 @@ class Level {
     return cells
   }
 
-  private adjacent(a: Point, b: Point) {
+  private adjacent(a: IPoint, b: IPoint) {
     return Math.abs(b.x - a.x) + Math.abs(b.y - a.y) === 2
   }
 
-  private choose(array: Point[]): Point {
+  private choose(array: IPoint[]): IPoint {
     return array[Math.floor(Math.random() * array.length)]
   }
 
-  private connect(maze: Map<Point, Point[]>) {
+  private connect(maze: Map<IPoint, IPoint[]>) {
     const tiles = new Array(this.width * this.height).fill('wall')
 
     Array.from(maze.entries()).forEach(([node, neighbors]) => {

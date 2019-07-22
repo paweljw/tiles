@@ -13,6 +13,7 @@ import stores from '../stores'
 import SkeletonContainer from './containers/SkeletonContainer'
 import WallContainer from './containers/WallContainer'
 import FloorContainer from './containers/FloorContainer'
+import LightProvider from './LightProvider';
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -25,7 +26,7 @@ class Game {
     })
 
     app.renderer.autoResize = true
-    app.renderer.backgroundColor = 0x666666
+    app.renderer.backgroundColor = 0x000000
 
     return app
   }
@@ -76,7 +77,7 @@ class Game {
 
     for (let i = 0; i < this.level.width; i++) {
       for (let j = 0; j < this.level.height; j++) {
-        const tileType = this.level.maze[this.level.locate({ x: i, y: j })]
+        const tileType = this.level.tileAt({ x: i, y: j })
 
         const collidable = tileType === 'wall'
 
@@ -105,7 +106,7 @@ class Game {
       const x = Math.floor(Math.random() * this.level.width)
       const y = Math.floor(Math.random() * this.level.height)
 
-      const tileType = this.level.maze[this.level.locate({ x, y })]
+      const tileType = this.level.tileAt({ x, y })
 
       if (tileType === 'floor') {
         const skeletonX = x * 64 + 32
@@ -123,6 +124,8 @@ class Game {
         }
       }
     }
+
+    stores.gameStateStore.steppables.add(new LightProvider(this.level))
 
     return stores.gameStateStore.viewport
   }

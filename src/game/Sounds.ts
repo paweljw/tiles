@@ -17,7 +17,7 @@ export default class Sounds {
     this.sounds[name] = Sound.from(this.loader.resources[name])
   }
 
-  public playSound(name: string, force: boolean = false) {
+  public playSound(name: string, { force = false, volume = 1 } = {}) {
     const sound = this.sounds[name]
 
     if (!sound) {
@@ -27,12 +27,12 @@ export default class Sounds {
     if (sound.isPlaying) {
       if (force) {
         sound.stop()
-        sound.play()
+        sound.play({ volume })
       }
 
       return
     }
 
-    sound.play()
+    sound.play({ volume })
   }
 }

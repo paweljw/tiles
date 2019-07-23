@@ -52,6 +52,7 @@ class Game {
       .add('select_sound', './select.mp3')
       .add('accept_sound', './accept.mp3')
       .add('pause_sound', './pause.mp3')
+      .add('bone_hit_sound', './bone_hit.mp3')
       .load(this.afterLoad)
   }
 
@@ -176,6 +177,7 @@ class Game {
     stores.gameStateStore.sounds.addSound('select_sound')
     stores.gameStateStore.sounds.addSound('accept_sound')
     stores.gameStateStore.sounds.addSound('pause_sound')
+    stores.gameStateStore.sounds.addSound('bone_hit_sound')
 
 
     stores.gameStateStore.viewport = this.buildViewport()

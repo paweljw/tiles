@@ -64,6 +64,7 @@ class SkeletonContainer extends AnimatableContainer {
   }
 
   public receiveDamage(_damage: number, hp: number): void {
+    stores.gameStateStore.sounds.playSound('bone_hit_sound', { force: true })
     if (hp <= 0) {
       stores.gameStateStore.viewport.removeChild(this.sprite)
       stores.gameStateStore.cullMask.removeObject(this.sprite)

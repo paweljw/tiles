@@ -10,7 +10,12 @@ const opts = require('yargs')
     type: 'number'
   })
   .option('s', {
-    alias: 'side',
+    alias: 'side_width',
+    demandOption: true,
+    type: 'number'
+  })
+  .option('q', {
+    alias: 'side_height',
     demandOption: true,
     type: 'number'
   })
@@ -28,11 +33,12 @@ const opts = require('yargs')
 
 
 const COLS = opts.w / opts.s
-const ROWS = opts.h / opts.s
-const SIDE = opts.s
+const ROWS = opts.h / opts.q
+const SIDE_WIDTH = opts.s
+const SIDE_HEIGHT = opts.q
 const NAME = [opts.p, 'r<row>c<col>.png'].filter(str => str && str.length > 0).join('_')
 
-const SOURCE_SIZE = { w: SIDE, h: SIDE }
+const SOURCE_SIZE = { w: SIDE_WIDTH, h: SIDE_HEIGHT }
 const SPRITE_SOURCE_SIZE = { x: 0, y: 0, ...SOURCE_SIZE }
 const FRAME = {
   rotated: false,
@@ -43,14 +49,14 @@ const FRAME = {
 
 const frames = {}
 
-for(let col = 1; col <= COLS; col++) {
-  for(let row = 1; row <= ROWS; row++) {
+for (let col = 1; col <= COLS; col++) {
+  for (let row = 1; row <= ROWS; row++) {
     const localName = NAME.replace('<row>', row.toString()).replace('<col>', col.toString())
     frames[localName] = {
       ...FRAME,
       frame: {
-        x: (col - 1) * SIDE,
-        y: (row - 1) * SIDE,
+        x: (col - 1) * SIDE_WIDTH,
+        y: (row - 1) * SIDE_HEIGHT,
         ...SOURCE_SIZE
       }
     }

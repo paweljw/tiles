@@ -47,8 +47,6 @@ export default class LightProvider {
       lightMap[atX] = lightMap[atX] || []
       lightMap[atX][atY] = i
 
-      console.log(this.level.tileAt({ x: atX, y: atY }))
-
       if (this.level.tileAt({ x: atX, y: atY }) === 'wall' || atX < 0) {
         i = -1
       }
@@ -61,8 +59,6 @@ export default class LightProvider {
       lightMap[atX] = lightMap[atX] || []
       lightMap[atX][atY] = i
 
-      console.log(this.level.tileAt({ x: atX, y: atY }))
-
       if (this.level.tileAt({ x: atX, y: atY }) === 'wall' || atY < 0) {
         i = -1
       }
@@ -74,8 +70,6 @@ export default class LightProvider {
 
       lightMap[atX] = lightMap[atX] || []
       lightMap[atX][atY] = i
-
-      console.log(this.level.tileAt({ x: atX, y: atY }))
 
       if (this.level.tileAt({ x: atX, y: atY }) === 'wall') {
         i = -1

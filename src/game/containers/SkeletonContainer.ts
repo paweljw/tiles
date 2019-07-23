@@ -8,6 +8,7 @@ import { AnimatableContainer } from './AnimatableContainer'
 import TextureCache from '../../textures/TextureCache'
 import withHp, { IWithHp } from '../decorators/withHp'
 import withLighting from '../decorators/withLighting'
+import { TILE_WIDTH, TILE_HEIGHT } from '../Level';
 
 @withLighting(true)
 @withHp(10)
@@ -17,7 +18,7 @@ class SkeletonContainer extends AnimatableContainer {
 
   constructor(x: number, y: number) {
     super(x, y, 1)
-    this.sprite.hitArea = new PIXI.Rectangle(0, 0, 32, 32)
+    this.sprite.hitArea = new PIXI.Rectangle(0, 0, TILE_WIDTH, TILE_HEIGHT)
   }
 
   public step(delta: number, collider: Collider): PIXI.DisplayObject[] {

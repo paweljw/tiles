@@ -8,7 +8,7 @@ import getRandomInt from './helpers/getRandomInt'
 import Collider from './Collider'
 import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
-import Level from './Level'
+import Level, { TILE_WIDTH, TILE_HEIGHT } from './Level'
 import stores from '../stores'
 import SkeletonContainer from './containers/SkeletonContainer'
 import WallContainer from './containers/WallContainer'
@@ -42,7 +42,8 @@ class Game {
 
     loader
       .add('spritesheet', './tileset.json')
-      .add('character_spritesheet', './character32.json')
+      .add('character_spritesheet', './character36.json')
+      .add('character_spritesheet2', './character32.json')
       .load(this.afterLoad)
   }
 
@@ -81,18 +82,26 @@ class Game {
 
         const collidable = tileType === 'wall'
 
-        const baseX = i * 64
-        const baseY = j * 64
+        const baseX = i * TILE_WIDTH * 2
+        const baseY = j * TILE_HEIGHT * 2
 
         for (let xOffset = 0; xOffset < 2; xOffset++) {
           for (let yOffset = 0; yOffset < 2; yOffset++) {
             const random = getRandomInt(5) + 1
             if (collidable) {
-              const container = new WallContainer(baseX + xOffset * 32, baseY + yOffset * 32, Wall[`wall${random}`])
+              const container = new WallContainer(
+                baseX + xOffset * TILE_WIDTH,
+                baseY + yOffset * TILE_HEIGHT,
+                Wall[`wall${random}`]
+              )
               stores.gameStateStore.viewport.addChild(container.sprite)
               stores.gameStateStore.cullMask.addObject(container.sprite, true, collidable)
             } else {
-              const container = new FloorContainer(baseX + xOffset * 32, baseY + yOffset * 32, Floor[`floor${random}`])
+              const container = new FloorContainer(
+                baseX + xOffset * TILE_WIDTH,
+                baseY + yOffset * TILE_HEIGHT,
+                Floor[`floor${random}`]
+              )
               stores.gameStateStore.viewport.addChild(container.sprite)
               stores.gameStateStore.cullMask.addObject(container.sprite, true, collidable)
             }
@@ -109,8 +118,8 @@ class Game {
       const tileType = this.level.tileAt({ x, y })
 
       if (tileType === 'floor') {
-        const skeletonX = x * 64 + 32
-        const skeletonY = y * 64 + 32
+        const skeletonX = x * (TILE_WIDTH * 2) + TILE_WIDTH
+        const skeletonY = y * (TILE_HEIGHT * 2) + TILE_HEIGHT
 
         if (!Array.from(stores.gameStateStore.steppables.entries()).find(
           ([item, _]) => item.sprite.x === skeletonX && item.sprite.y === skeletonY)
@@ -154,12 +163,13 @@ class Game {
 
   public afterLoad = () => {
     stores.gameStateStore.viewport = this.buildViewport()
-
     stores.gameStateStore.cullMask = new Cull()
-
     this.buildLevelContainer()
 
-    stores.gameStateStore.char = new CharacterContainer(240, 3020)
+    stores.gameStateStore.viewport.worldWidth = this.level.pixelWidth
+    stores.gameStateStore.viewport.worldHeight = this.level.pixelHeight
+
+    stores.gameStateStore.char = new CharacterContainer(270, 3402)
     stores.gameStateStore.steppables.add(stores.gameStateStore.char)
 
     stores.gameStateStore.viewport.addChild(stores.gameStateStore.char.sprite)

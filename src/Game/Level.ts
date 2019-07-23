@@ -2,8 +2,8 @@
 
 import { IPoint } from './types'
 
-const TILE_WIDTH = 32
-const TILE_HEIGHT = 32
+export const TILE_WIDTH = 36
+export const TILE_HEIGHT = 36
 
 // TODO: Move maze generation out of Level
 // TODO: Ensure mazes look less "algorithmic" (wall erosion)

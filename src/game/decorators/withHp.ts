@@ -1,4 +1,5 @@
 import Collider from '../Collider'
+import { TILE_WIDTH } from '../Level';
 
 const YELLOW = 0xFFFF00
 const GREEN = 0x00FF00
@@ -57,7 +58,7 @@ export default function withHp(maxHp: number) {
 
         this.healthBar.clear()
         this.healthBar.beginFill(color)
-        this.healthBar.drawRect(0, 0, Math.ceil(this.hp / this.maxHp * 32), 2)
+        this.healthBar.drawRect(0, 0, Math.ceil(this.hp / this.maxHp * TILE_WIDTH), 2)
         this.healthBar.x = -16
         this.healthBar.y = 18
       }

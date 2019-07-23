@@ -24,6 +24,7 @@ export class MissileContainer {
     this.direction = direction
 
     stores.gameStateStore.viewport.addChild(this.sprite)
+    stores.gameStateStore.sounds.playSound('fire_sound', true)
   }
 
   public step(delta: number, collider: Collider): PIXI.DisplayObject[] {

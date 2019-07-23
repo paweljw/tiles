@@ -5,6 +5,7 @@ import { ISteppableSprite } from '../game/types'
 import { CharacterContainer } from '../game/containers/CharacterContainer'
 import { Simple as Cull } from '../game/culling'
 import Collider from '../game/Collider'
+import Sounds from '../game/Sounds'
 
 export default class GameStateStore {
   @observable public loading: boolean = true
@@ -17,4 +18,5 @@ export default class GameStateStore {
   @observable public cullMask: Cull
   @observable public collider: Collider
   @observable public lightableObjects: Set<any> = new Set()
+  @observable public sounds: Sounds
 }

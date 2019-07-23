@@ -1,6 +1,8 @@
-import { Application, loader, Sprite, Container } from 'pixi.js'
+import { Application, loader } from 'pixi.js'
 import { Viewport } from 'pixi-viewport'
 import { Simple as Cull } from './culling'
+import PixiSound from 'pixi-sound'
+const sound = PixiSound.Sound
 
 import scaleToWindow from './helpers/scaleToWindow'
 import { CharacterContainer } from './containers/CharacterContainer'
@@ -13,7 +15,8 @@ import stores from '../stores'
 import SkeletonContainer from './containers/SkeletonContainer'
 import WallContainer from './containers/WallContainer'
 import FloorContainer from './containers/FloorContainer'
-import LightProvider from './LightProvider';
+import LightProvider from './LightProvider'
+import Sounds from './Sounds'
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -44,6 +47,11 @@ class Game {
       .add('spritesheet', './tileset.json')
       .add('character_spritesheet', './character36.json')
       .add('character_spritesheet2', './character32.json')
+      .add('step_sound', './step.mp3')
+      .add('fire_sound', './fire.mp3')
+      .add('select_sound', './select.mp3')
+      .add('accept_sound', './accept.mp3')
+      .add('pause_sound', './pause.mp3')
       .load(this.afterLoad)
   }
 
@@ -162,6 +170,14 @@ class Game {
   }
 
   public afterLoad = () => {
+    stores.gameStateStore.sounds = new Sounds(loader)
+    stores.gameStateStore.sounds.addSound('step_sound')
+    stores.gameStateStore.sounds.addSound('fire_sound')
+    stores.gameStateStore.sounds.addSound('select_sound')
+    stores.gameStateStore.sounds.addSound('accept_sound')
+    stores.gameStateStore.sounds.addSound('pause_sound')
+
+
     stores.gameStateStore.viewport = this.buildViewport()
     stores.gameStateStore.cullMask = new Cull()
     this.buildLevelContainer()

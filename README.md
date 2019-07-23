@@ -24,3 +24,7 @@ The FontStruction “Pixel-Art”
 (http://fontstruct.fontshop.com/fontstructions/show/332304) by “GerardBouchard.com” is licensed under a Creative Commons Attribution Share Alike license (http://creativecommons.org/licenses/by-sa/3.0/).
 
 Free music might come from https://eluukkanen.bandcamp.com/album/free-music-album-vol-1
+
+Character 16x18 sprites: Art by Charles Gabriel (Antifarea). Commissioned by OpenGameArt.org (http://opengameart.org) https://opengameart.org/content/twelve-16x18-rpg-sprites-plus-base
+
+Sound effects obtained from https://www.zapsplat.com

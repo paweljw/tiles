@@ -5,7 +5,18 @@ export interface IWithLighting {
   receiveDamage(damage: number): void
 }
 
-export const MAX_LIGHT = 6
+export const MAX_LIGHT = 7
+
+const LIGHT_LEVELS = [
+  0x000000,
+  0x202020,
+  0x505050,
+  0x707070,
+  0xA0A0A0,
+  0xBEBEBE,
+  0xDCDCDC,
+  0xFFFFFF
+]
 
 export default function withLighting(hidesInShadows: boolean) {
   return function _withLighting<T extends { new(...args: any[]) }>(constr: T) {
@@ -17,7 +28,8 @@ export default function withLighting(hidesInShadows: boolean) {
       constructor(...args: any[]) {
         super(...args)
         stores.gameStateStore.lightableObjects.add(this)
-        this.sprite.alpha = this.light / MAX_LIGHT
+        this.sprite.tint = LIGHT_LEVELS[this.light]
+        this.sprite.children.forEach(child => child.alpha = this.light / MAX_LIGHT)
       }
 
       public applyLighting(lightLevel: number) {
@@ -32,10 +44,11 @@ export default function withLighting(hidesInShadows: boolean) {
         let appliedLight = this.light
 
         if (this.wasEverVisible && !this.hidesInShadows) {
-          appliedLight = Math.max(MAX_LIGHT / 2, appliedLight)
+          appliedLight = Math.floor(Math.max(MAX_LIGHT / 2, appliedLight))
         }
 
-        this.sprite.alpha = appliedLight / MAX_LIGHT
+        this.sprite.tint = LIGHT_LEVELS[appliedLight]
+        this.sprite.children.forEach(child => child.alpha = appliedLight / MAX_LIGHT)
       }
     }
   }

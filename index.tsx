@@ -66,6 +66,7 @@ autorun(() => {
 
 window.addEventListener('keydown', ({ key }) => {
   if (key === 'Escape') {
+    stores.gameStateStore.sounds.playSound('pause_sound')
     stores.gameStateStore.paused = !stores.gameStateStore.paused
   }
 })

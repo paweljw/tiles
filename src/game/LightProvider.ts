@@ -147,8 +147,8 @@ export default class LightProvider {
 
   private normalizeCoords(x: number, y: number) {
     return {
-      x: (x - (x % 64)) / 64,
-      y: (y - (y % 64)) / 64
+      x: (x - (x % 72)) / 72,
+      y: (y - (y % 72)) / 72
     }
   }
 }

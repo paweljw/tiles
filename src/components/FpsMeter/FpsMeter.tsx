@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { inject } from 'mobx-react'
 
-import stores from '../stores'
 import './FpsMeter.scss'
 
 interface IFpsMeterProps {

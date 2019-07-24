@@ -11,7 +11,7 @@ import midpointRealCoords from '../helpers/midpointRealCoords'
 import { TILE_HEIGHT } from '../constants/tilemap'
 
 const Keyboard = stores.keyboardStore
-const MOVEMENT_SPEED = 3
+const MOVEMENT_SPEED = 4
 
 export class CharacterContainer extends AnimatableContainer {
   private gcd: number = 0
@@ -37,7 +37,7 @@ export class CharacterContainer extends AnimatableContainer {
 
     if (this.gcd === 0 && Keyboard.isFiring) {
       stores.gameStateStore.steppables.add(new MissileContainer(this.sprite.x, this.sprite.y, Keyboard.direction))
-      this.gcd = 10
+      this.gcd = 20
     }
 
     if (this.movingAnimation) {
@@ -72,6 +72,8 @@ export class CharacterContainer extends AnimatableContainer {
 
         const newTileX = this.tileX + tileMaskX
         const newTileY = this.tileY + tileMaskY
+
+        stores.gameStateStore.sounds.playSound('step_sound', { force: true, volume: 0.1 })
 
         if (!tileCollider.collideAt({ x: newTileX, y: newTileY })) {
           this.movingAnimation = true

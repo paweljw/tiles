@@ -48,6 +48,11 @@ export default function withLighting(hidesInShadows: boolean) {
         }
 
         this.sprite.tint = LIGHT_LEVELS[appliedLight]
+        if (appliedLight === 0) {
+          this.sprite.alpha = 0
+        } else {
+          this.sprite.alpha = 1
+        }
         this.sprite.children.forEach(child => child.alpha = appliedLight / MAX_LIGHT)
       }
     }

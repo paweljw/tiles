@@ -11,5 +11,5 @@ export default (startPoint: IPoint, endPoint: IPoint): boolean => {
   const pathPoints = bresenham(startPoint, endPoint, { omitStart: true, omitEnd: false })
   const convertedPath = pathPoints.map(point => stores.gameStateStore.currentLevel.tileAt(point))
 
-  return convertedPath.every(item => item === 'floor') || convertedPath.slice(0, convertedPath.length - 1).every(item => item === 'floor')
+  return convertedPath.slice(0, convertedPath.length - 1).every(item => item === 'floor')
 }

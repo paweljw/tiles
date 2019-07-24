@@ -1,6 +1,6 @@
 import BaseLevel from './levels/BaseLevel'
 import stores from '../stores'
-import { MAX_LIGHT } from './decorators/withLighting'
+import lineOfSight from './helpers/lineOfSight'
 
 const LIGHT_MAP = [
   [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -21,24 +21,10 @@ const LIGHT_MAP = [
 ]
 
 export default class LightProvider {
-  public level: BaseLevel
-  public previousCharacterX: number
-  public previousCharacterY: number
   public sprite: PIXI.DisplayObject
-
-  constructor(level: BaseLevel) {
-    this.level = level
-  }
 
   public step(_delta, _collider) {
     const { x, y } = stores.gameStateStore.char.tileCoords
-
-    if (x === this.previousCharacterX && y === this.previousCharacterY) {
-      return []
-    }
-
-    this.previousCharacterX = x
-    this.previousCharacterY = y
 
     const lightMap = []
 
@@ -47,8 +33,10 @@ export default class LightProvider {
         const lX = x - 7 + i
         const lY = y - 7 + j
 
-        lightMap[lX] = lightMap[lX] || []
-        lightMap[lX][lY] = LIGHT_MAP[i][j]
+        if (lineOfSight({ x, y }, { x: lX, y: lY })) {
+          lightMap[lX] = lightMap[lX] || []
+          lightMap[lX][lY] = LIGHT_MAP[i][j]
+        }
       }
     }
 
@@ -66,11 +54,4 @@ export default class LightProvider {
   }
 
   public receiveDamage(..._args) { /* no-op */ }
-
-  private normalizeCoords(x: number, y: number) {
-    return {
-      x: (x - (x % 72)) / 72,
-      y: (y - (y % 72)) / 72
-    }
-  }
 }

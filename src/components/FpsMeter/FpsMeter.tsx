@@ -13,7 +13,7 @@ interface IFpsMeterFullProps {
 }
 
 const FpsMeter = ({ fps }: IFpsMeterProps | IFpsMeterFullProps) => (
-  <div className='fps'>{fps} FPS</div>
+  <div className='fps' style={{ color: fps < 60 ? 'red' : 'white' }}>{fps} FPS</div>
 )
 
 export { FpsMeter as BaseFpsMeter }

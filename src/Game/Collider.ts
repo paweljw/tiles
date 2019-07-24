@@ -1,13 +1,13 @@
 import { ICollidableSource } from './types'
 import calculateAABB from './helpers/calculateAABB'
 import rectCornersFromAABB from './helpers/rectCornersFromAABB'
-import Level from './levels/MazeLevel'
+import BaseLevel from './levels/BaseLevel'
 
 export default class Collider {
   public source: ICollidableSource
-  public level: Level
+  public level: BaseLevel
 
-  constructor(source: ICollidableSource, level: Level) {
+  constructor(source: ICollidableSource, level: BaseLevel) {
     this.source = source
     this.level = level
   }

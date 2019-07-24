@@ -1,24 +1,17 @@
 import { Application, loader } from 'pixi.js'
 import { Viewport } from 'pixi-viewport'
 import { Simple as Cull } from './culling'
-import PixiSound from 'pixi-sound'
-const sound = PixiSound.Sound
 
 import scaleToWindow from './helpers/scaleToWindow'
 import { CharacterContainer } from './containers/CharacterContainer'
-import getRandomInt from './helpers/getRandomInt'
 import Collider from './Collider'
-import Wall from '../textures/Wall'
-import Floor from '../textures/Floor'
-import Level from './levels/MazeLevel'
-import { TILE_WIDTH, TILE_HEIGHT } from './constants/tilemap'
 import stores from '../stores'
 import SkeletonContainer from './containers/SkeletonContainer'
 import LightProvider from './LightProvider'
 import Sounds from './Sounds'
-import SimplexContainer from './containers/SimplexContainer';
-import MazeLevel from './levels/MazeLevel';
-import midpointRealCoords from './helpers/midpointRealCoords';
+import MazeLevel from './levels/MazeLevel'
+import midpointRealCoords from './helpers/midpointRealCoords'
+import { IPoint } from './types'
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -82,18 +75,26 @@ class Game {
     }
   }
 
-  public buildLevelContainer = () => {
-    this.level = new MazeLevel(100, 100)
+  // TODO: This... could go somewhero elso, I think (it got way too beefy)
+  public loadCurrentLevel = () => {
+    stores.gameStateStore.cullMask = new Cull()
+    stores.gameStateStore.viewport.worldWidth = stores.gameStateStore.currentLevel.pixelWidth
+    stores.gameStateStore.viewport.worldHeight = stores.gameStateStore.currentLevel.pixelHeight
 
-    for (let i = 0; i < this.level.width; i++) {
-      for (let j = 0; j < this.level.height; j++) {
-        const container = this.level.textureAt({ x: i, y: j })
+    stores.gameStateStore.app.stage.children.forEach(child => stores.gameStateStore.app.stage.removeChild(child))
+    stores.gameStateStore.viewport.children.forEach(child => stores.gameStateStore.viewport.removeChild(child))
+
+    stores.gameStateStore.collider = new Collider(stores.gameStateStore.cullMask, stores.gameStateStore.currentLevel)
+
+    for (let i = 0; i < stores.gameStateStore.currentLevel.width; i++) {
+      for (let j = 0; j < stores.gameStateStore.currentLevel.height; j++) {
+        const container = stores.gameStateStore.currentLevel.textureAt({ x: i, y: j })
         stores.gameStateStore.viewport.addChild(container.sprite)
         stores.gameStateStore.cullMask.addObject(container.sprite, true, container.isCollidable)
       }
     }
 
-    this.level.spawns().forEach(spawn => {
+    stores.gameStateStore.currentLevel.spawns().forEach((spawn: IPoint) => {
       const { x, y } = midpointRealCoords(spawn)
 
       const skeleton = new SkeletonContainer(x, y)
@@ -102,17 +103,20 @@ class Game {
       stores.gameStateStore.cullMask.addObject(skeleton.sprite, false, true)
     })
 
-    stores.gameStateStore.steppables.add(new LightProvider(this.level))
+    stores.gameStateStore.steppables.add(new LightProvider(stores.gameStateStore.currentLevel))
 
-    const { x, y } = midpointRealCoords(this.level.characterSpawn())
+    const { x, y } = midpointRealCoords(stores.gameStateStore.currentLevel.characterSpawn())
 
     stores.gameStateStore.char = new CharacterContainer(x, y)
     stores.gameStateStore.steppables.add(stores.gameStateStore.char)
 
     stores.gameStateStore.viewport.addChild(stores.gameStateStore.char.sprite)
     stores.gameStateStore.viewport.follow(stores.gameStateStore.char.sprite)
+    stores.gameStateStore.cullMask.addObject(stores.gameStateStore.char.sprite, false, true)
 
-    return stores.gameStateStore.viewport
+    stores.gameStateStore.app.stage.addChild(stores.gameStateStore.viewport)
+
+    stores.gameStateStore.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
   }
 
   public buildViewport = () => {
@@ -146,21 +150,11 @@ class Game {
     stores.gameStateStore.sounds.addSound('pause_sound')
     stores.gameStateStore.sounds.addSound('bone_hit_sound')
 
-
     stores.gameStateStore.viewport = this.buildViewport()
-    stores.gameStateStore.cullMask = new Cull()
-    this.buildLevelContainer()
 
-    stores.gameStateStore.viewport.worldWidth = this.level.pixelWidth
-    stores.gameStateStore.viewport.worldHeight = this.level.pixelHeight
-
-    stores.gameStateStore.app.stage.addChild(stores.gameStateStore.viewport)
-
-    stores.gameStateStore.cullMask.addObject(stores.gameStateStore.char.sprite, false, true)
-
-    stores.gameStateStore.cullMask.cull(stores.gameStateStore.viewport.getVisibleBounds())
-
-    stores.gameStateStore.collider = new Collider(stores.gameStateStore.cullMask, this.level)
+    // TODO: Initial level: this may need whapping elsewhere (e.g. reaction to character selection)
+    stores.gameStateStore.currentLevel = new MazeLevel(100, 100)
+    this.loadCurrentLevel()
 
     stores.gameStateStore.app.ticker.add(delta => this.loop(delta))
 

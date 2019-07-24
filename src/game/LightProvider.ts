@@ -1,14 +1,32 @@
-import Level from './levels/MazeLevel'
+import BaseLevel from './levels/BaseLevel'
 import stores from '../stores'
-import { MAX_LIGHT } from './decorators/withLighting';
+import { MAX_LIGHT } from './decorators/withLighting'
+
+const LIGHT_MAP = [
+  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 2, 3, 4, 3, 2, 1, 0, 0, 0, 0],
+  [0, 0, 0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0, 0, 0],
+  [0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 0],
+  [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0],
+  [1, 2, 3, 4, 5, 6, 7, 7, 7, 6, 5, 4, 3, 2, 1],
+  [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0],
+  [0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 0],
+  [0, 0, 0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0, 0, 0],
+  [0, 0, 0, 0, 1, 2, 3, 4, 3, 2, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+]
 
 export default class LightProvider {
-  public level: Level
+  public level: BaseLevel
   public previousCharacterX: number
   public previousCharacterY: number
   public sprite: PIXI.DisplayObject
 
-  constructor(level: Level) {
+  constructor(level: BaseLevel) {
     this.level = level
   }
 

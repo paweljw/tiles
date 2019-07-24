@@ -31,125 +31,29 @@ export default class LightProvider {
   }
 
   public step(_delta, _collider) {
-    const { x, y } = stores.gameStateStore.char.sprite
+    const { x, y } = stores.gameStateStore.char.tileCoords
 
-    // if (x === this.previousCharacterX && y === this.previousCharacterY) {
-    //   return []
-    // }
+    if (x === this.previousCharacterX && y === this.previousCharacterY) {
+      return []
+    }
 
     this.previousCharacterX = x
     this.previousCharacterY = y
 
-    const normalizedCharacterCoords = this.normalizeCoords(x, y)
-
-    // calculate light in four cardinal directions
-
     const lightMap = []
 
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x + (i - MAX_LIGHT)
-      const atY = normalizedCharacterCoords.y
+    for (let i = 0; i < LIGHT_MAP[0].length; i++) {
+      for (let j = 0; j < LIGHT_MAP.length; j++) {
+        const lX = x - 7 + i
+        const lY = y - 7 + j
 
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall') {
-        i = -1
-      }
-    }
-
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x - (i - MAX_LIGHT)
-      const atY = normalizedCharacterCoords.y
-
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall' || atX < 0) {
-        i = -1
-      }
-    }
-
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x
-      const atY = normalizedCharacterCoords.y - (i - MAX_LIGHT)
-
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall' || atY < 0) {
-        i = -1
-      }
-    }
-
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x
-      const atY = normalizedCharacterCoords.y + (i - MAX_LIGHT)
-
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall') {
-        i = -1
-      }
-    }
-
-    // calculate light at diagonals
-
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x + (i - MAX_LIGHT)
-      const atY = normalizedCharacterCoords.y + (i - MAX_LIGHT)
-
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall') {
-        i = -1
-      }
-    }
-
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x - (i - MAX_LIGHT)
-      const atY = normalizedCharacterCoords.y - (i - MAX_LIGHT)
-
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall' || atX < 0) {
-        i = -1
-      }
-    }
-
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x + (i - MAX_LIGHT)
-      const atY = normalizedCharacterCoords.y - (i - MAX_LIGHT)
-
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall' || atY < 0) {
-        i = -1
-      }
-    }
-
-    for (let i = MAX_LIGHT; i >= 0; i--) {
-      const atX = normalizedCharacterCoords.x - (i - MAX_LIGHT)
-      const atY = normalizedCharacterCoords.y + (i - MAX_LIGHT)
-
-      lightMap[atX] = lightMap[atX] || []
-      lightMap[atX][atY] = i
-
-      if (this.level.tileAt({ x: atX, y: atY }) === 'wall') {
-        i = -1
+        lightMap[lX] = lightMap[lX] || []
+        lightMap[lX][lY] = LIGHT_MAP[i][j]
       }
     }
 
     stores.gameStateStore.lightableObjects.forEach(lightable => {
-      if (!lightable.visible) {
-        return
-      }
-
-      const { x: lX, y: lY } = this.normalizeCoords(lightable.sprite.x, lightable.sprite.y)
+      const { x: lX, y: lY } = lightable.tileCoords
 
       if (lightMap[lX] && lightMap[lX][lY]) {
         lightable.applyLighting(lightMap[lX][lY])

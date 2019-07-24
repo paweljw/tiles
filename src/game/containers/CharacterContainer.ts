@@ -6,12 +6,18 @@ import Collider from '../Collider'
 import { MissileContainer } from './MissileContainer'
 import { AnimatableContainer } from './AnimatableContainer'
 import TextureCache from '../../textures/TextureCache'
+import tileMovementMatrix from '../constants/tileMovementMatrix'
+import midpointRealCoords from '../helpers/midpointRealCoords'
+import { TILE_HEIGHT } from '../constants/tilemap'
 
 const Keyboard = stores.keyboardStore
 const MOVEMENT_SPEED = 3
 
 export class CharacterContainer extends AnimatableContainer {
   private gcd: number = 0
+  private movingAnimation: boolean = false
+  private movingDirection: Direction = Direction.UP
+  private movementAnimationFramesRemaining = 0
 
   constructor(x: number, y: number) {
     super(x, y, MOVEMENT_SPEED)
@@ -20,6 +26,7 @@ export class CharacterContainer extends AnimatableContainer {
   }
 
   public step(delta: number, collider: Collider): PIXI.DisplayObject[] {
+    const { tileCollider } = stores.gameStateStore
     const moveBy = delta * this.movementSpeed
 
     let newGcd = this.gcd -= delta
@@ -33,25 +40,58 @@ export class CharacterContainer extends AnimatableContainer {
       this.gcd = 10
     }
 
-    if (Keyboard.isMoving) {
-      this.setFacing(Keyboard.facing)
+    if (this.movingAnimation) {
+      this.movementAnimationFramesRemaining -= delta
 
-      if (!this.sprite.playing) {
-        this.sprite.play()
+      if (this.movementAnimationFramesRemaining <= 0) {
+        const { x, y } = midpointRealCoords({ x: this.tileX, y: this.tileY })
+        this.sprite.x = x
+        this.sprite.y = y
+        this.movementAnimationFramesRemaining = 0
+        this.movingAnimation = false
+        this.movingDirection = null
+      } else {
+        this.move(moveBy, this.movingDirection, collider)
       }
-
-      this.move(moveBy, Keyboard.direction, collider)
 
       return [this.sprite]
     } else {
-      if (this.sprite.playing) {
-        this.sprite.gotoAndStop(1)
-      } // Very specific to character tileset used. Usually 0
-      return []
+      if (Keyboard.isMoving) {
+        this.setFacing(Keyboard.facing)
+        if (Keyboard.direction !== this.movingDirection) {
+          this.movingDirection = Keyboard.direction
+          return [this.sprite]
+        }
+
+        if (!this.sprite.playing) {
+          this.sprite.play()
+        }
+        // select tile by direction
+
+        const [tileMaskX, tileMaskY] = tileMovementMatrix[Keyboard.direction]
+
+        const newTileX = this.tileX + tileMaskX
+        const newTileY = this.tileY + tileMaskY
+
+        if (!tileCollider.collideAt({ x: newTileX, y: newTileY })) {
+          this.movingAnimation = true
+          this.movingDirection = Keyboard.direction
+          this.movementAnimationFramesRemaining = TILE_HEIGHT / MOVEMENT_SPEED
+          this.tileX = newTileX
+          this.tileY = newTileY
+        }
+
+        return [this.sprite]
+      } else {
+        if (this.sprite.playing) {
+          this.sprite.gotoAndStop(1)
+        }
+        return []
+      }
     }
   }
 
-  public receiveDamage(_) { /* TODO: No-op! */ }
+  public receiveDamage(_) { /* TODO: No-op! For now. */ }
 
   protected get texturePack(): TextureCache {
     return Character
@@ -63,9 +103,9 @@ export class CharacterContainer extends AnimatableContainer {
     const proposedX = this.sprite.x + xMod * moveBy
     const proposedY = this.sprite.y + yMod * moveBy
 
-    if (!collider.collision(this.sprite, proposedX, proposedY)) {
-      this.sprite.x = proposedX
-      this.sprite.y = proposedY
-    }
+    // if (!collider.collision(this.sprite, proposedX, proposedY)) {
+    this.sprite.x = proposedX
+    this.sprite.y = proposedY
+    // }
   }
 }

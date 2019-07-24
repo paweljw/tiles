@@ -4,6 +4,7 @@ import { Direction } from '../types'
 import movementMatrix from '../constants/movementMatrix'
 import Collider from '../Collider'
 import Missile from '../../textures/Missile'
+import tileCoords from '../helpers/tileCoords'
 
 export class MissileContainer {
   public sprite: PIXI.extras.AnimatedSprite
@@ -43,6 +44,8 @@ export class MissileContainer {
   }
 
   private move(moveBy: number, collider: Collider): void {
+    const { tileCollider } = stores.gameStateStore
+
     const [xMod, yMod] = movementMatrix[this.direction]
 
     const proposedX = this.sprite.x + xMod * moveBy
@@ -57,17 +60,17 @@ export class MissileContainer {
       return
     }
 
-    const collidedWith = collider.collision(this.sprite, proposedX, proposedY, [stores.gameStateStore.char.sprite])
+    const { x, y } = tileCoords({ x: proposedX, y: proposedY })
+
+    const collidedWith = tileCollider.collideAt({ x, y })
+
     this.sprite.x = proposedX
     this.sprite.y = proposedY
 
     if (collidedWith) {
       this.removeSelf()
 
-      const collidedWithContainer =
-        Array.from(stores.gameStateStore.steppables.values()).find(item => item.sprite && item.sprite === collidedWith)
-
-      collidedWithContainer && collidedWithContainer.receiveDamage(1)
+      collidedWith.receiveDamage && collidedWith.receiveDamage(1)
     }
   }
 }

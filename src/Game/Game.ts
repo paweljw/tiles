@@ -12,6 +12,7 @@ import Sounds from './Sounds'
 import MazeLevel from './levels/MazeLevel'
 import midpointRealCoords from './helpers/midpointRealCoords'
 import { IPoint } from './types'
+import TileCollider from './TileCollider'
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -29,7 +30,6 @@ class Game {
     return app
   }
   private element: HTMLElement
-  private level: Level
 
   constructor(element: HTMLElement) {
     this.element = element
@@ -84,23 +84,27 @@ class Game {
     stores.gameStateStore.app.stage.children.forEach(child => stores.gameStateStore.app.stage.removeChild(child))
     stores.gameStateStore.viewport.children.forEach(child => stores.gameStateStore.viewport.removeChild(child))
 
-    stores.gameStateStore.collider = new Collider(stores.gameStateStore.cullMask, stores.gameStateStore.currentLevel)
+    stores.gameStateStore.tileCollider = new TileCollider()
 
     for (let i = 0; i < stores.gameStateStore.currentLevel.width; i++) {
       for (let j = 0; j < stores.gameStateStore.currentLevel.height; j++) {
         const container = stores.gameStateStore.currentLevel.textureAt({ x: i, y: j })
         stores.gameStateStore.viewport.addChild(container.sprite)
         stores.gameStateStore.cullMask.addObject(container.sprite, true, container.isCollidable)
+        if (container.isCollidable) {
+          stores.gameStateStore.tileCollider.addContainer(container)
+        }
       }
     }
 
     stores.gameStateStore.currentLevel.spawns().forEach((spawn: IPoint) => {
-      const { x, y } = midpointRealCoords(spawn)
+      const { x: dx, y: dy } = midpointRealCoords(spawn)
 
-      const skeleton = new SkeletonContainer(x, y)
+      const skeleton = new SkeletonContainer(dx, dy)
       stores.gameStateStore.steppables.add(skeleton)
       stores.gameStateStore.viewport.addChild(skeleton.sprite)
       stores.gameStateStore.cullMask.addObject(skeleton.sprite, false, true)
+      stores.gameStateStore.tileCollider.addContainer(skeleton)
     })
 
     stores.gameStateStore.steppables.add(new LightProvider(stores.gameStateStore.currentLevel))

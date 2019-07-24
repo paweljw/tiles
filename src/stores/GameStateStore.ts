@@ -7,6 +7,7 @@ import { Simple as Cull } from '../game/culling'
 import Collider from '../game/Collider'
 import Sounds from '../game/Sounds'
 import BaseLevel from '../game/levels/BaseLevel'
+import TileCollider from '../game/TileCollider'
 
 export default class GameStateStore {
   @observable public loading: boolean = true
@@ -21,4 +22,5 @@ export default class GameStateStore {
   @observable public lightableObjects: Set<any> = new Set()
   @observable public sounds: Sounds
   @observable public currentLevel: BaseLevel
+  @observable public tileCollider: TileCollider
 }

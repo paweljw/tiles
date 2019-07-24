@@ -1,4 +1,5 @@
-const COS_QT_PI = 0.70710678118 // cos(1/4 * PI)
+// const COS_QT_PI = 0.70710678118 // cos(1/4 * PI)
+const COS_QT_PI = 1
 
 export default {
   UP: [0, -1],

@@ -1,6 +1,7 @@
 import { Sprite } from 'pixi.js'
 import withLighting from '../decorators/withLighting'
-import tileCoords from '../helpers/tileCoords';
+import tileCoords from '../helpers/tileCoords'
+import { IPoint } from '../types'
 
 @withLighting(false)
 export default class SimplexContainer {
@@ -25,4 +26,10 @@ export default class SimplexContainer {
   public get isCollidable(): boolean {
     return false
   }
+
+  public get tileCoords(): IPoint {
+    return { x: this.tileX, y: this.tileY }
+  }
+
+  public receiveDamage(..._args) { /* no-op */ }
 }

@@ -9,12 +9,19 @@ import TextureCache from '../../textures/TextureCache'
 import withHp, { IWithHp } from '../decorators/withHp'
 import withLighting from '../decorators/withLighting'
 import { TILE_WIDTH, TILE_HEIGHT } from '../constants/tilemap'
+import midpointRealCoords from '../helpers/midpointRealCoords'
+import tileMovementMatrix from '../constants/tileMovementMatrix'
+
+const MOVEMENT_SPEED = 2
 
 @withLighting(true)
 @withHp(10)
 class SkeletonContainer extends AnimatableContainer {
   private walkFrames: number = getRandomInt(120) + 40
   private chillFrames: number = getRandomInt(180) + 40
+  private movingAnimation: boolean = false
+  private movingDirection: Direction = Direction.UP
+  private movementAnimationFramesRemaining = 0
 
   constructor(x: number, y: number) {
     super(x, y, 1)
@@ -26,7 +33,37 @@ class SkeletonContainer extends AnimatableContainer {
       return []
     }
 
-    if (this.walkFrames > 0) {
+    const moveBy = delta * MOVEMENT_SPEED
+
+    if (this.movingAnimation) {
+      this.movementAnimationFramesRemaining -= delta
+
+      if (this.movementAnimationFramesRemaining <= 0) {
+        const { x, y } = midpointRealCoords({ x: this.tileX, y: this.tileY })
+        this.sprite.x = x
+        this.sprite.y = y
+        this.movementAnimationFramesRemaining = 0
+        this.movingAnimation = false
+        this.movingDirection = null
+        this.chillFrames = getRandomInt(180) + 40
+        this.sprite.stop()
+      } else {
+        this.move(moveBy, this.movingDirection, collider)
+      }
+
+      return [this.sprite]
+    }
+
+    if (this.chillFrames > 0) {
+      this.chillFrames -= delta
+      return []
+    } else {
+      this.chillFrames = 0
+      const { tileCollider } = stores.gameStateStore
+      const random = getRandomInt(4)
+      const facing = [Facing.UP, Facing.DOWN, Facing.LEFT, Facing.RIGHT][random]
+      this.setFacing(facing)
+
       let direction: Direction
 
       if (this.facing === Facing.UP) direction = Direction.UP
@@ -34,33 +71,24 @@ class SkeletonContainer extends AnimatableContainer {
       if (this.facing === Facing.LEFT) direction = Direction.LEFT
       if (this.facing === Facing.RIGHT) direction = Direction.RIGHT
 
-      this.move(delta * this.movementSpeed, direction, collider)
+      const [tileMaskX, tileMaskY] = tileMovementMatrix[direction]
 
-      this.walkFrames -= delta
+      const newTileX = this.tileX + tileMaskX
+      const newTileY = this.tileY + tileMaskY
 
-      return [this.sprite]
-    }
-
-    if (this.chillFrames > 0) {
-      if (this.sprite.playing) this.sprite.stop()
-      this.chillFrames -= delta
-
-      return []
-    }
-
-    if (this.walkFrames <= 0 && this.chillFrames <= 0) {
-      this.walkFrames = getRandomInt(120) + 40
-      this.chillFrames = getRandomInt(180) + 40
-
-      const random = getRandomInt(4)
-
-      const facing = [Facing.UP, Facing.DOWN, Facing.LEFT, Facing.RIGHT][random]
-      this.setFacing(facing)
+      if (!tileCollider.collideAt({ x: newTileX, y: newTileY })) {
+        this.sprite.play()
+        this.movingAnimation = true
+        this.movingDirection = direction
+        this.movementAnimationFramesRemaining = TILE_HEIGHT / MOVEMENT_SPEED
+        this.tileX = newTileX
+        this.tileY = newTileY
+      } else {
+        this.chillFrames = getRandomInt(180) + 40
+      }
 
       return [this.sprite]
     }
-
-    return []
   }
 
   public receiveDamage(_damage: number, hp: number): void {
@@ -68,6 +96,7 @@ class SkeletonContainer extends AnimatableContainer {
     if (hp <= 0) {
       stores.gameStateStore.viewport.removeChild(this.sprite)
       stores.gameStateStore.cullMask.removeObject(this.sprite)
+      stores.gameStateStore.tileCollider.removeContainer(this)
       stores.gameStateStore.lightableObjects.delete(this)
     }
   }
@@ -82,16 +111,8 @@ class SkeletonContainer extends AnimatableContainer {
     const proposedX = this.sprite.x + xMod * moveBy
     const proposedY = this.sprite.y + yMod * moveBy
 
-    if (!collider.collision(this.sprite, proposedX, proposedY)) {
-      if (!this.sprite.playing) this.sprite.play()
-      this.sprite.x = proposedX
-      this.sprite.y = proposedY
-    } else {
-      this.sprite.stop()
-      const random = getRandomInt(4)
-      const facing = [Facing.UP, Facing.DOWN, Facing.LEFT, Facing.RIGHT][random]
-      this.setFacing(facing)
-    }
+    this.sprite.x = proposedX
+    this.sprite.y = proposedY
   }
 }
 

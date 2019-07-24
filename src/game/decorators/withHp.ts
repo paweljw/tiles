@@ -1,9 +1,6 @@
 import Collider from '../Collider'
-import { TILE_WIDTH } from '../Level';
-
-const YELLOW = 0xFFFF00
-const GREEN = 0x00FF00
-const RED = 0xFF0000
+import { TILE_WIDTH } from '../constants/tilemap'
+import { GREEN, YELLOW, RED } from '../constants/colors'
 
 export interface IWithHp {
   receiveDamage(damage: number): void

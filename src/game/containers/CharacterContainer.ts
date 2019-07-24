@@ -16,7 +16,7 @@ export class CharacterContainer extends AnimatableContainer {
   constructor(x: number, y: number) {
     super(x, y, MOVEMENT_SPEED)
     this.sprite.tint = 0xeeeeee
-    this.sprite.hitArea = new PIXI.Rectangle(3, 2, 26, 29)
+    this.sprite.hitArea = new PIXI.Rectangle(2, 0, 32, 36)
   }
 
   public step(delta: number, collider: Collider): PIXI.DisplayObject[] {
@@ -26,7 +26,7 @@ export class CharacterContainer extends AnimatableContainer {
     if (newGcd < 0) newGcd = 0
     this.gcd = newGcd
 
-    Keyboard.update() // TODO: Move to a steppable (once new steppables implemented)
+    Keyboard.update()
 
     if (this.gcd === 0 && Keyboard.isFiring) {
       stores.gameStateStore.steppables.add(new MissileContainer(this.sprite.x, this.sprite.y, Keyboard.direction))

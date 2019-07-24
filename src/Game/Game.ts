@@ -10,13 +10,15 @@ import getRandomInt from './helpers/getRandomInt'
 import Collider from './Collider'
 import Wall from '../textures/Wall'
 import Floor from '../textures/Floor'
-import Level, { TILE_WIDTH, TILE_HEIGHT } from './Level'
+import Level from './levels/MazeLevel'
+import { TILE_WIDTH, TILE_HEIGHT } from './constants/tilemap'
 import stores from '../stores'
 import SkeletonContainer from './containers/SkeletonContainer'
-import WallContainer from './containers/WallContainer'
-import FloorContainer from './containers/FloorContainer'
 import LightProvider from './LightProvider'
 import Sounds from './Sounds'
+import SimplexContainer from './containers/SimplexContainer';
+import MazeLevel from './levels/MazeLevel';
+import midpointRealCoords from './helpers/midpointRealCoords';
 
 class Game {
   public static buildApp = (): PIXI.Application => {
@@ -81,69 +83,34 @@ class Game {
   }
 
   public buildLevelContainer = () => {
-    this.level = new Level(50, 50)
-
-    // TODO: Move all of the tile generation to Level
+    this.level = new MazeLevel(100, 100)
 
     for (let i = 0; i < this.level.width; i++) {
       for (let j = 0; j < this.level.height; j++) {
-        const tileType = this.level.tileAt({ x: i, y: j })
-
-        const collidable = tileType === 'wall'
-
-        const baseX = i * TILE_WIDTH * 2
-        const baseY = j * TILE_HEIGHT * 2
-
-        for (let xOffset = 0; xOffset < 2; xOffset++) {
-          for (let yOffset = 0; yOffset < 2; yOffset++) {
-            const random = getRandomInt(5) + 1
-            if (collidable) {
-              const container = new WallContainer(
-                baseX + xOffset * TILE_WIDTH,
-                baseY + yOffset * TILE_HEIGHT,
-                Wall[`wall${random}`]
-              )
-              stores.gameStateStore.viewport.addChild(container.sprite)
-              stores.gameStateStore.cullMask.addObject(container.sprite, true, collidable)
-            } else {
-              const container = new FloorContainer(
-                baseX + xOffset * TILE_WIDTH,
-                baseY + yOffset * TILE_HEIGHT,
-                Floor[`floor${random}`]
-              )
-              stores.gameStateStore.viewport.addChild(container.sprite)
-              stores.gameStateStore.cullMask.addObject(container.sprite, true, collidable)
-            }
-          }
-        }
+        const container = this.level.textureAt({ x: i, y: j })
+        stores.gameStateStore.viewport.addChild(container.sprite)
+        stores.gameStateStore.cullMask.addObject(container.sprite, true, container.isCollidable)
       }
     }
 
+    this.level.spawns().forEach(spawn => {
+      const { x, y } = midpointRealCoords(spawn)
 
-    for (let i = 200; i >= 0;) {
-      const x = Math.floor(Math.random() * this.level.width)
-      const y = Math.floor(Math.random() * this.level.height)
-
-      const tileType = this.level.tileAt({ x, y })
-
-      if (tileType === 'floor') {
-        const skeletonX = x * (TILE_WIDTH * 2) + TILE_WIDTH
-        const skeletonY = y * (TILE_HEIGHT * 2) + TILE_HEIGHT
-
-        if (!Array.from(stores.gameStateStore.steppables.entries()).find(
-          ([item, _]) => item.sprite.x === skeletonX && item.sprite.y === skeletonY)
-        ) {
-          i--
-
-          const skeleton = new SkeletonContainer(skeletonX, skeletonY)
-          stores.gameStateStore.steppables.add(skeleton)
-          stores.gameStateStore.viewport.addChild(skeleton.sprite)
-          stores.gameStateStore.cullMask.addObject(skeleton.sprite, false, true)
-        }
-      }
-    }
+      const skeleton = new SkeletonContainer(x, y)
+      stores.gameStateStore.steppables.add(skeleton)
+      stores.gameStateStore.viewport.addChild(skeleton.sprite)
+      stores.gameStateStore.cullMask.addObject(skeleton.sprite, false, true)
+    })
 
     stores.gameStateStore.steppables.add(new LightProvider(this.level))
+
+    const { x, y } = midpointRealCoords(this.level.characterSpawn())
+
+    stores.gameStateStore.char = new CharacterContainer(x, y)
+    stores.gameStateStore.steppables.add(stores.gameStateStore.char)
+
+    stores.gameStateStore.viewport.addChild(stores.gameStateStore.char.sprite)
+    stores.gameStateStore.viewport.follow(stores.gameStateStore.char.sprite)
 
     return stores.gameStateStore.viewport
   }
@@ -187,11 +154,6 @@ class Game {
     stores.gameStateStore.viewport.worldWidth = this.level.pixelWidth
     stores.gameStateStore.viewport.worldHeight = this.level.pixelHeight
 
-    stores.gameStateStore.char = new CharacterContainer(270, 3402)
-    stores.gameStateStore.steppables.add(stores.gameStateStore.char)
-
-    stores.gameStateStore.viewport.addChild(stores.gameStateStore.char.sprite)
-    stores.gameStateStore.viewport.follow(stores.gameStateStore.char.sprite)
     stores.gameStateStore.app.stage.addChild(stores.gameStateStore.viewport)
 
     stores.gameStateStore.cullMask.addObject(stores.gameStateStore.char.sprite, false, true)

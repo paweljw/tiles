@@ -8,7 +8,7 @@ import { AnimatableContainer } from './AnimatableContainer'
 import TextureCache from '../../textures/TextureCache'
 import withHp, { IWithHp } from '../decorators/withHp'
 import withLighting from '../decorators/withLighting'
-import { TILE_WIDTH, TILE_HEIGHT } from '../Level';
+import { TILE_WIDTH, TILE_HEIGHT } from '../constants/tilemap'
 
 @withLighting(true)
 @withHp(10)

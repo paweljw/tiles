@@ -1,4 +1,4 @@
-import Level from './Level'
+import Level from './levels/MazeLevel'
 import stores from '../stores'
 import { MAX_LIGHT } from './decorators/withLighting';
 

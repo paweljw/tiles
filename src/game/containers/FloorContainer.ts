@@ -1,17 +1,14 @@
-import { Sprite } from 'pixi.js'
-import withLighting from '../decorators/withLighting'
+import SimplexContainer from './SimplexContainer'
+import getRandomInt from '../helpers/getRandomInt'
+import Floor from '../../textures/Floor'
 
-@withLighting(false)
-export default class FloorContainer {
-  public sprite: PIXI.DisplayObject
+export default class FloorContainer extends SimplexContainer {
+  constructor(x: number, y: number, texture?: PIXI.Texture) {
+    if (!texture) {
+      const random = getRandomInt(5) + 1
+      texture = Floor[`floor${random}`]
+    }
 
-  constructor(x: number, y: number, texture: PIXI.Texture) {
-    this.sprite = new Sprite(texture)
-    this.sprite.x = x
-    this.sprite.y = y
-  }
-
-  public get visible() {
-    return this.sprite.visible || this.sprite.renderable
+    super(x, y, texture)
   }
 }

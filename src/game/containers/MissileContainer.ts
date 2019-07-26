@@ -67,7 +67,7 @@ export class MissileContainer {
     this.sprite.x = proposedX
     this.sprite.y = proposedY
 
-    if (collidedWith) {
+    if (collidedWith && collidedWith !== stores.gameStateStore.char) {
       this.removeSelf()
 
       collidedWith.receiveDamage && collidedWith.receiveDamage(1)

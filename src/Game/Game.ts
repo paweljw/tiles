@@ -4,7 +4,6 @@ import { Simple as Cull } from './culling'
 
 import scaleToWindow from './helpers/scaleToWindow'
 import { CharacterContainer } from './containers/CharacterContainer'
-import Collider from './Collider'
 import stores from '../stores'
 import SkeletonContainer from './containers/SkeletonContainer'
 import LightProvider from './LightProvider'

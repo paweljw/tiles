@@ -107,11 +107,12 @@ class Game {
       stores.gameStateStore.tileCollider.addContainer(skeleton)
     })
 
-    stores.gameStateStore.steppables.add(new LightProvider(stores.gameStateStore.currentLevel))
+    stores.gameStateStore.steppables.add(new LightProvider())
 
     const { x, y } = midpointRealCoords(stores.gameStateStore.currentLevel.characterSpawn())
 
     stores.gameStateStore.char = new CharacterContainer(x, y)
+    stores.gameStateStore.tileCollider.addContainer(stores.gameStateStore.char)
     stores.gameStateStore.steppables.add(stores.gameStateStore.char)
 
     stores.gameStateStore.viewport.addChild(stores.gameStateStore.char.sprite)

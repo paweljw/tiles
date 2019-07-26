@@ -1,6 +1,5 @@
-import BaseLevel from './levels/BaseLevel'
 import stores from '../stores'
-import lineOfSight from './helpers/lineOfSight'
+import stringifyPoint from '../helpers/stringifyPoint'
 
 const LIGHT_MAP = [
   [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -25,6 +24,7 @@ export default class LightProvider {
 
   public step(_delta, _collider) {
     const { x, y } = stores.gameStateStore.char.tileCoords
+    const strLocal = stringifyPoint({ x, y })
 
     const lightMap = []
 
@@ -33,7 +33,11 @@ export default class LightProvider {
         const lX = x - 7 + i
         const lY = y - 7 + j
 
-        if (lineOfSight({ x, y }, { x: lX, y: lY })) {
+        if (
+          stores.gameStateStore.currentLevel.lineOfSightMap.has(strLocal) &&
+          stores.gameStateStore.currentLevel.lineOfSightMap
+            .get(strLocal).has(stringifyPoint({ x: lX, y: lY }))
+        ) {
           lightMap[lX] = lightMap[lX] || []
           lightMap[lX][lY] = LIGHT_MAP[i][j]
         }

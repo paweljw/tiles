@@ -18,6 +18,7 @@ class MazeLevel extends BaseLevel {
     super(width, height)
 
     this.maze = this.buildInternalMaze()
+    this.lineOfSightMap = this.internalLineOfSightMap()
   }
 
   public textureAt(cell: IPoint): SimplexContainer {

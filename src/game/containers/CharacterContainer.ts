@@ -1,6 +1,6 @@
 import Character from '../../textures/Character'
 import stores from '../../stores'
-import { Direction } from '../types'
+import { Direction, IPoint, Facing } from '../types'
 import movementMatrix from '../constants/movementMatrix'
 import Collider from '../Collider'
 import { MissileContainer } from './MissileContainer'
@@ -66,21 +66,20 @@ export class CharacterContainer extends AnimatableContainer {
         if (!this.sprite.playing) {
           this.sprite.play()
         }
+
         // select tile by direction
-
-        const [tileMaskX, tileMaskY] = tileMovementMatrix[Keyboard.direction]
-
-        const newTileX = this.tileX + tileMaskX
-        const newTileY = this.tileY + tileMaskY
+        const effectiveDirection = this.selectEffectiveDirection(Keyboard.direction)
+        this.setFacing(this.effectiveFacing(effectiveDirection))
+        const nextTileInDirection = this.nextTileInDirection(effectiveDirection)
 
         stores.gameStateStore.sounds.playSound('step_sound', { force: true, volume: 0.1 })
 
-        if (!tileCollider.collideAt({ x: newTileX, y: newTileY })) {
+        if (!tileCollider.collideAt(nextTileInDirection)) {
           this.movingAnimation = true
-          this.movingDirection = Keyboard.direction
+          this.movingDirection = effectiveDirection
           this.movementAnimationFramesRemaining = TILE_HEIGHT / MOVEMENT_SPEED
-          this.tileX = newTileX
-          this.tileY = newTileY
+          this.tileX = nextTileInDirection.x
+          this.tileY = nextTileInDirection.y
         }
 
         return [this.sprite]
@@ -105,9 +104,102 @@ export class CharacterContainer extends AnimatableContainer {
     const proposedX = this.sprite.x + xMod * moveBy
     const proposedY = this.sprite.y + yMod * moveBy
 
-    // if (!collider.collision(this.sprite, proposedX, proposedY)) {
     this.sprite.x = proposedX
     this.sprite.y = proposedY
-    // }
+  }
+
+  private selectEffectiveDirection(direction: Direction): Direction {
+    // if direction has no additional components, just use this
+    if (direction === Direction.UP ||
+      direction === Direction.DOWN ||
+      direction === Direction.RIGHT ||
+      direction === Direction.LEFT) {
+      return direction
+    }
+
+    // if won't collide in this direction anyway, carry on
+    if (!this.collidesInDirection(direction)) {
+      return direction
+    }
+
+    // seems we would collide, but maybe one direction component is fine
+    if (direction === Direction.UP_RIGHT) {
+      if (!this.collidesInDirection(Direction.UP)) {
+        return Direction.UP
+      }
+
+      if (!this.collidesInDirection(Direction.RIGHT)) {
+        return Direction.RIGHT
+      }
+    }
+
+    if (direction === Direction.UP_LEFT) {
+      if (!this.collidesInDirection(Direction.UP)) {
+        return Direction.UP
+      }
+
+      if (!this.collidesInDirection(Direction.LEFT)) {
+        return Direction.LEFT
+      }
+    }
+
+    if (direction === Direction.DOWN_RIGHT) {
+      if (!this.collidesInDirection(Direction.DOWN)) {
+        return Direction.DOWN
+      }
+
+      if (!this.collidesInDirection(Direction.RIGHT)) {
+        return Direction.RIGHT
+      }
+    }
+
+    if (direction === Direction.DOWN_LEFT) {
+      if (!this.collidesInDirection(Direction.DOWN)) {
+        return Direction.DOWN
+      }
+
+      if (!this.collidesInDirection(Direction.LEFT)) {
+        return Direction.LEFT
+      }
+    }
+
+    // all hope is lost
+    return direction
+  }
+
+  private nextTileInDirection(direction: Direction): IPoint {
+    const [tilemaskX, tilemaskY] = tileMovementMatrix[direction]
+
+    return {
+      x: this.tileX + tilemaskX,
+      y: this.tileY + tilemaskY
+    }
+  }
+
+  private collidesAt(position: IPoint): boolean {
+    const { tileCollider } = stores.gameStateStore
+    return !!tileCollider.collideAt(position)
+  }
+
+  private collidesInDirection(direction: Direction): boolean {
+    const nextTile = this.nextTileInDirection(direction)
+    return this.collidesAt(nextTile)
+  }
+
+  private effectiveFacing(direction: Direction) {
+    switch (direction) {
+      case Direction.UP:
+      case Direction.UP_RIGHT:
+      case Direction.UP_LEFT:
+        return Facing.UP
+      case Direction.DOWN:
+      case Direction.DOWN_RIGHT:
+      case Direction.DOWN_LEFT:
+        return Facing.DOWN
+      case Direction.LEFT:
+        return Facing.LEFT
+      case Direction.RIGHT:
+        return Facing.RIGHT
+    }
   }
 }

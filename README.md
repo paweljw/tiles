@@ -28,3 +28,8 @@ Free music might come from https://eluukkanen.bandcamp.com/album/free-music-albu
 Character 16x18 sprites: Art by Charles Gabriel (Antifarea). Commissioned by OpenGameArt.org (http://opengameart.org) https://opengameart.org/content/twelve-16x18-rpg-sprites-plus-base
 
 Sound effects obtained from https://www.zapsplat.com
+
+Cursors:
+
+Copyright 2008 Jordan Trudgett | http://jordan.trudgett.com/ - Licensed under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/
+https://opengameart.org/content/cursors-arrows-map-markers-for-ardentryst-by-jordan-trudgett

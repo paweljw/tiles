@@ -11,14 +11,16 @@ import LightProvider from './LightProvider'
 import Sounds from './Sounds'
 import MazeLevel from './levels/MazeLevel'
 import midpointRealCoords from './helpers/midpointRealCoords'
-import { IPoint } from './types'
+import { IPoint, Direction } from './types'
 import TileCollider from './TileCollider'
+import Mouse from './Mouse'
+import { RENDERER_WIDTH, RENDERER_HEIGHT } from './constants/renderer'
 
 class Game {
   public static buildApp = (): PIXI.Application => {
     const app = new Application({
-      width: 1280,
-      height: 720,
+      width: RENDERER_WIDTH,
+      height: RENDERER_HEIGHT,
       antialias: true,
       transparent: false,
       resolution: window.devicePixelRatio || 1
@@ -54,6 +56,7 @@ class Game {
   public onResizeHandler = () => {
     const ret = scaleToWindow(stores.gameStateStore.app.view)
     document.getElementById('root').style.zoom = ret.toString()
+    stores.gameStateStore.scale = ret
     scrollTo(0, 0)
   }
 
@@ -61,6 +64,38 @@ class Game {
     const { gameStateStore } = stores
 
     gameStateStore.fps = parseFloat((60 / delta).toFixed(2))
+
+
+    if (stores.gameStateStore.mouse.mouseDirection) {
+      let cursor = 'default'
+      switch (stores.gameStateStore.mouse.mouseDirection) {
+        case Direction.UP:
+          cursor = 'url(up.png), n-resize'
+          break
+        case Direction.DOWN:
+          cursor = 'url(down.png), s-resize'
+          break
+        case Direction.RIGHT:
+          cursor = 'url(right.png), e-resize'
+          break
+        case Direction.LEFT:
+          cursor = 'url(left.png), w-resize'
+          break
+        case Direction.UP_RIGHT:
+          cursor = 'url(up-right.png), ne-resize'
+          break
+        case Direction.DOWN_RIGHT:
+          cursor = 'url(down-right.png), se-resize'
+          break
+        case Direction.UP_LEFT:
+          cursor = 'url(up-left.png), nw-resize'
+          break
+        case Direction.DOWN_LEFT:
+          cursor = 'url(down-left.png), sw-resize'
+          break
+      }
+      document.body.style.cursor = cursor
+    }
 
     if (gameStateStore.paused) return
 
@@ -126,8 +161,8 @@ class Game {
 
   public buildViewport = () => {
     const viewport = new Viewport({
-      screenWidth: 1280,
-      screenHeight: 720,
+      screenWidth: RENDERER_WIDTH,
+      screenHeight: RENDERER_HEIGHT,
       worldWidth: 3200,
       worldHeight: 3200
     })
@@ -160,6 +195,7 @@ class Game {
     // TODO: Initial level: this may need whapping elsewhere (e.g. reaction to character selection)
     stores.gameStateStore.currentLevel = new MazeLevel(100, 100)
     this.loadCurrentLevel()
+    stores.gameStateStore.mouse = new Mouse()
 
     stores.gameStateStore.app.ticker.add(delta => this.loop(delta))
 

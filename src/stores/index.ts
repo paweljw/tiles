@@ -14,4 +14,7 @@ const stores: IStoreLayout = {
   settingsStore: new SettingsStore(),
 }
 
+// @ts-ignore
+window.$r = stores
+
 export default stores

@@ -72,6 +72,10 @@ body {
   }
 }
 
+#root * {
+  cursor: url('src/assets/pointer.png'), pointer !important;
+}
+
 @keyframes fadeIn {
   0% {
       display: none;

@@ -8,6 +8,7 @@ import Collider from '../game/Collider'
 import Sounds from '../game/Sounds'
 import BaseLevel from '../game/levels/BaseLevel'
 import TileCollider from '../game/TileCollider'
+import Mouse from '../game/Mouse'
 
 export default class GameStateStore {
   @observable public loading: boolean = true
@@ -23,4 +24,6 @@ export default class GameStateStore {
   @observable public sounds: Sounds
   @observable public currentLevel: BaseLevel
   @observable public tileCollider: TileCollider
+  @observable public scale: number
+  @observable public mouse: Mouse
 }

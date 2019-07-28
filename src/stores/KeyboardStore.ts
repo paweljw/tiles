@@ -2,6 +2,7 @@ import { observable, computed, action } from 'mobx'
 import { default as PixiKeyboard } from 'pixi.js-keyboard'
 import { Facing, Direction } from '../game/types'
 import { default as root } from '.'
+import { Buttons } from '../game/Mouse'
 
 export default class KeyboardStore {
   @observable public upPressed: boolean = false
@@ -13,10 +14,36 @@ export default class KeyboardStore {
   private lastDirection: Direction = Direction.UP
 
   @computed public get isMoving(): boolean {
-    return this.upPressed || this.downPressed || this.leftPressed || this.rightPressed
+    return this.upPressed ||
+      this.downPressed ||
+      this.leftPressed ||
+      this.rightPressed ||
+      (root.gameStateStore.mouse &&
+        root.gameStateStore.mouse.isButtonDown(Buttons.LEFT) &&
+        !!root.gameStateStore.mouse.mouseDirection)
   }
 
   @computed public get facing(): Facing {
+    // mouse support
+    if (root.gameStateStore.mouse &&
+      root.gameStateStore.mouse.isButtonDown(Buttons.LEFT) &&
+      root.gameStateStore.mouse.mouseDirection) {
+      const direction = root.gameStateStore.mouse.mouseDirection
+
+      if (direction === Direction.UP || direction === Direction.UP_LEFT || direction === Direction.UP_RIGHT) {
+        return Facing.UP
+      } else if (direction === Direction.DOWN_LEFT ||
+        direction === Direction.DOWN ||
+        direction === Direction.DOWN_RIGHT) {
+        return Facing.DOWN
+      } else if (direction === Direction.LEFT) {
+        return Facing.LEFT
+      } else if (direction === Direction.RIGHT) {
+        return Facing.RIGHT
+      }
+    }
+
+    // keyboard support
     if (this.downPressed) {
       return Facing.DOWN
     } else if (this.upPressed) {
@@ -31,22 +58,28 @@ export default class KeyboardStore {
   @computed public get direction(): Direction {
     let direction = null
 
-    if (this.upPressed && this.rightPressed) {
-      direction = Direction.UP_RIGHT
-    } else if (this.upPressed && this.leftPressed) {
-      direction = Direction.UP_LEFT
-    } else if (this.downPressed && this.rightPressed) {
-      direction = Direction.DOWN_RIGHT
-    } else if (this.downPressed && this.leftPressed) {
-      direction = Direction.DOWN_LEFT
-    } else if (this.rightPressed) {
-      direction = Direction.RIGHT
-    } else if (this.leftPressed) {
-      direction = Direction.LEFT
-    } else if (this.downPressed) {
-      direction = Direction.DOWN
-    } else if (this.upPressed) {
-      direction = Direction.UP
+    if (root.gameStateStore.mouse &&
+      root.gameStateStore.mouse.isButtonDown(Buttons.LEFT) &&
+      root.gameStateStore.mouse.mouseDirection) {
+      direction = root.gameStateStore.mouse.mouseDirection
+    } else {
+      if (this.upPressed && this.rightPressed) {
+        direction = Direction.UP_RIGHT
+      } else if (this.upPressed && this.leftPressed) {
+        direction = Direction.UP_LEFT
+      } else if (this.downPressed && this.rightPressed) {
+        direction = Direction.DOWN_RIGHT
+      } else if (this.downPressed && this.leftPressed) {
+        direction = Direction.DOWN_LEFT
+      } else if (this.rightPressed) {
+        direction = Direction.RIGHT
+      } else if (this.leftPressed) {
+        direction = Direction.LEFT
+      } else if (this.downPressed) {
+        direction = Direction.DOWN
+      } else if (this.upPressed) {
+        direction = Direction.UP
+      }
     }
 
     direction = direction || this.lastDirection
